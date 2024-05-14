@@ -15,13 +15,14 @@ namespace taikoclone
         /// <summary>
         /// The time at which this object should be hit
         /// </summary>
-        private double time;
+        public double time;
 
         private double preempt = 500;
         private double playfieldStart = 112;
         private double playfieldEnd = 700;
-        private double hitWindow = 100;
-        private int y = 12;
+        private double hitWindowGreat = 100;
+        private double hitWindowMiss = 100;
+        private int y = 25;
         private int radius = 25;
         private Image sprite;
         public PictureBox box;
@@ -34,7 +35,12 @@ namespace taikoclone
             box.Image = sprite;
             box.Location = new System.Drawing.Point(0, 0);
             box.Size = new System.Drawing.Size(radius * 2, radius * 2);
-            box.Visible = true;
+            box.Visible = false;
+            box.SizeMode = PictureBoxSizeMode.Zoom;
+        }
+        ~HitObject()
+        {
+            box.Visible = false;
         }
         private double xPosition(double remainingTime)
         {
@@ -45,9 +51,9 @@ namespace taikoclone
         public void Draw(double currentTime)
         {
             double remainingTime = time - currentTime;
-            if (remainingTime < -hitWindow || remainingTime > preempt)
+            if (remainingTime < -hitWindowGreat || remainingTime > preempt)
             {
-                //box.Visible = false;
+                box.Visible = false;
                 return;
             }
             else box.Visible = true;

@@ -46,7 +46,7 @@
             // GameUpdate
             // 
             this.GameUpdate.Enabled = true;
-            this.GameUpdate.Interval = 20;
+            this.GameUpdate.Interval = 10;
             this.GameUpdate.Tick += new System.EventHandler(this.GameUpdate_Tick);
             // 
             // label1
