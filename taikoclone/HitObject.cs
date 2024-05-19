@@ -26,21 +26,19 @@ namespace taikoclone
         private int radius = 25;
         private Image sprite;
         public PictureBox box;
+        public ObjectType type;
 
-        public HitObject(double time)
+        public HitObject(double time, ObjectType type)
         {
             this.time = time;
-            sprite = Image.FromFile("../../taikohitcircle.png");
+            this.type = type;
+            sprite = type == ObjectType.LEFT ? Image.FromFile("../../hitcircleleft.png") : Image.FromFile("../../hitcircleright.png");
             box = new PictureBox();
             box.Image = sprite;
             box.Location = new System.Drawing.Point(0, 0);
             box.Size = new System.Drawing.Size(radius * 2, radius * 2);
             box.Visible = false;
             box.SizeMode = PictureBoxSizeMode.Zoom;
-        }
-        ~HitObject()
-        {
-            box.Visible = false;
         }
         private double xPosition(double remainingTime)
         {
@@ -60,5 +58,10 @@ namespace taikoclone
             int x = (int)xPosition(remainingTime);
             box.Location = new Point(x, y);
         }
+    }
+    public enum ObjectType
+    {
+        RIGHT,
+        LEFT
     }
 }

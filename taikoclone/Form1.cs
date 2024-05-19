@@ -28,11 +28,11 @@ namespace taikoclone
             graphics = pictureBoxClickCircle.CreateGraphics();
             hitObjects = new List<HitObject>
             {
-                new HitObject(1500),
-                new HitObject(1600),
-                new HitObject(1700),
-                new HitObject(1800),
-                new HitObject(1850)
+                new HitObject(1500, ObjectType.LEFT),
+                new HitObject(1600, ObjectType.LEFT),
+                new HitObject(1700, ObjectType.LEFT),
+                new HitObject(1800, ObjectType.LEFT),
+                new HitObject(1850, ObjectType.RIGHT)
             };
             foreach (var hitObject in hitObjects)
                 this.Controls.Add(hitObject.box);
@@ -56,7 +56,13 @@ namespace taikoclone
             nextObject.box.Visible = false;
             hitObjects.Remove(nextObject);
             Console.WriteLine(timeToNextObject);
-            judgements.Add(timeToNextObject > hitWindow ? Judgement.Miss : Judgement.Great);
+            if (timeToNextObject > hitWindow)
+                judgements.Add(Judgement.Miss);
+            else if (nextObject.type == ObjectType.LEFT && e.KeyCode == Keys.T
+                || nextObject.type == ObjectType.RIGHT && e.KeyCode == Keys.R)
+                judgements.Add(Judgement.Miss);
+            else
+                judgements.Add(Judgement.Great);
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -75,8 +81,7 @@ namespace taikoclone
             graphics.FillPie(new SolidBrush(rightKey ? Color.Blue : Color.DarkGray), rect, 270, 180);
             if (judgements.Count != 0)
             {
-                label1.Text = judgements.Where(j => j == Judgement.Great).Count().ToString();
-                graphics.FillEllipse(new SolidBrush(judgements.Last() == Judgement.Great ? Color.Green : Color.IndianRed)
+                graphics.FillEllipse(new SolidBrush(judgements.Last() == Judgement.Great ? Color.Cyan : Color.IndianRed)
                     , new Rectangle(33, 33, 33, 33));
             }
             if (hitObjects.Count == 0)
@@ -94,8 +99,8 @@ namespace taikoclone
         }
         public enum Judgement
         {
-            Great,
-            Miss
+            Great = 300,
+            Miss = 0
         };
     }
 }
