@@ -13,28 +13,31 @@ namespace taikoclone
 {
     public partial class Form1 : Form
     {
+        public static double playfieldStart = 112;
+        public static double playfieldEnd = 700;
         bool leftKey;
         bool rightKey;
         double currentTime;
         Graphics graphics;
-        List<HitObject> hitObjects;
         List<Judgement> judgements = new List<Judgement>();
         double hitWindow = 100;
         double hitWindowMiss = 100;
         double preempt = 500;
+        double clockRate = 0.2;
+        Map map;
         public Form1()
         {
             InitializeComponent();
             graphics = pictureBoxClickCircle.CreateGraphics();
-            hitObjects = new List<HitObject>
+            map = new Map(preempt, hitWindow, hitWindow + hitWindowMiss, new List<HitObject>
             {
-                new HitObject(1500, ObjectType.LEFT),
-                new HitObject(1600, ObjectType.LEFT),
-                new HitObject(1700, ObjectType.LEFT),
-                new HitObject(1800, ObjectType.LEFT),
-                new HitObject(1850, ObjectType.RIGHT)
-            };
-            foreach (var hitObject in hitObjects)
+                new HitObject(500, ObjectType.LEFT ),
+                new HitObject(600, ObjectType.LEFT ),
+                new HitObject(700, ObjectType.LEFT ),
+                new HitObject(800, ObjectType.LEFT ),
+                new HitObject(900, ObjectType.RIGHT)
+            });
+            foreach (var hitObject in map.objects)
                 this.Controls.Add(hitObject.box);
             pictureBoxClickCircle.SendToBack();
         }
@@ -45,24 +48,10 @@ namespace taikoclone
                 leftKey = true;
             if (e.KeyCode == Keys.T)
                 rightKey = true;
-            if (hitObjects.Count == 0)
-                return;
-            double timeToNextObject = hitObjects.Min(obj => obj.time < currentTime - preempt ? double.MaxValue : obj.time - currentTime);
-            if (timeToNextObject == double.MaxValue)
-                return;
-            if (timeToNextObject > hitWindow + hitWindowMiss)
-                return;
-            HitObject nextObject = hitObjects.First(obj => obj.time - currentTime == timeToNextObject);
-            nextObject.box.Visible = false;
-            hitObjects.Remove(nextObject);
-            Console.WriteLine(timeToNextObject);
-            if (timeToNextObject > hitWindow)
-                judgements.Add(Judgement.Miss);
-            else if (nextObject.type == ObjectType.LEFT && e.KeyCode == Keys.T
-                || nextObject.type == ObjectType.RIGHT && e.KeyCode == Keys.R)
-                judgements.Add(Judgement.Miss);
-            else
-                judgements.Add(Judgement.Great);
+
+            Judgement? outcome = map.TapObject(currentTime, e.KeyCode);
+            if (!(outcome is null))
+                judgements.Add(outcome.Value);
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -75,32 +64,28 @@ namespace taikoclone
 
         private void GameUpdate_Tick(object sender, EventArgs e)
         {
-            currentTime += GameUpdate.Interval;
+            currentTime += GameUpdate.Interval * clockRate;
             Rectangle rect = new Rectangle(0, 0, 100, 100);
             graphics.FillPie(new SolidBrush(leftKey ? Color.Red : Color.DarkGray), rect, 90, 180);
             graphics.FillPie(new SolidBrush(rightKey ? Color.Blue : Color.DarkGray), rect, 270, 180);
             if (judgements.Count != 0)
             {
-                graphics.FillEllipse(new SolidBrush(judgements.Last() == Judgement.Great ? Color.Cyan : Color.IndianRed)
+                graphics.FillEllipse(new SolidBrush(
+                    judgements.Last() == Judgement.Great ? Color.Cyan 
+                    : judgements.Last() == Judgement.Ok ? Color.Green
+                    : Color.IndianRed)
                     , new Rectangle(33, 33, 33, 33));
             }
-            if (hitObjects.Count == 0)
-                return;
-            if (hitObjects[0].time < currentTime - hitWindow)
-            {
-                hitObjects[0].box.Visible = false;
-                hitObjects.RemoveAt(0);
-                judgements.Add(Judgement.Miss);
-            }
-            if (hitObjects.Count == 0)
-                return;
-            foreach (HitObject hitObject in hitObjects)
-                hitObject.Draw(currentTime);
+            HitObject nextObject = map.NextObject(currentTime);
+            if (!(nextObject is null))
+                nextObject.box.BackColor = Color.White;
+            map.DrawObjects(currentTime);
         }
-        public enum Judgement
-        {
-            Great = 300,
-            Miss = 0
-        };
     }
+    public enum Judgement
+    {
+        Great = 300,
+        Ok = 100,
+        Miss = 0
+    };
 }

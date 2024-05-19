@@ -17,16 +17,14 @@ namespace taikoclone
         /// </summary>
         public double time;
 
-        private double preempt = 500;
-        private double playfieldStart = 112;
-        private double playfieldEnd = 700;
-        private double hitWindowGreat = 100;
-        private double hitWindowMiss = 100;
         private int y = 25;
         private int radius = 25;
         private Image sprite;
         public PictureBox box;
         public ObjectType type;
+        public Map map;
+        public int Index;
+        public bool Active = true;
 
         public HitObject(double time, ObjectType type)
         {
@@ -43,13 +41,13 @@ namespace taikoclone
         private double xPosition(double remainingTime)
         {
             // proportion of duration remaining
-            double dR = remainingTime / preempt;
-            return (1 - dR) * playfieldStart + dR * playfieldEnd;
+            double dR = remainingTime / map.Preempt;
+            return (1 - dR) * Form1.playfieldStart + dR * Form1.playfieldEnd;
         }
         public void Draw(double currentTime)
         {
             double remainingTime = time - currentTime;
-            if (remainingTime < -hitWindowGreat || remainingTime > preempt)
+            if (remainingTime < -map.HitWindowGreat || remainingTime > map.Preempt)
             {
                 box.Visible = false;
                 return;
@@ -57,6 +55,18 @@ namespace taikoclone
             else box.Visible = true;
             int x = (int)xPosition(remainingTime);
             box.Location = new Point(x, y);
+        }
+        public HitObject Previous(int index)
+        {
+            if (Index - index < 0)
+                return null;
+            return map.objects[Index - index];
+        }
+        public HitObject Next(int index)
+        {
+            if (Index + index >= map.objects.Count())
+                return null;
+            return map.objects[Index + index];
         }
     }
     public enum ObjectType
