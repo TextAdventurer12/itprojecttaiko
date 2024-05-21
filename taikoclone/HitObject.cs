@@ -25,6 +25,8 @@ namespace taikoclone
         public Map map;
         public int Index;
         public bool Active = true;
+        public double LastTime
+            => time + map.HitWindowMiss;
 
         public HitObject(double time, ObjectType type)
         {
@@ -33,8 +35,8 @@ namespace taikoclone
             sprite = type == ObjectType.LEFT ? Image.FromFile("../../hitcircleleft.png") : Image.FromFile("../../hitcircleright.png");
             box = new PictureBox();
             box.Image = sprite;
-            box.Location = new System.Drawing.Point(0, 0);
-            box.Size = new System.Drawing.Size(radius * 2, radius * 2);
+            box.Location = new Point(0, 0);
+            box.Size = new Size(radius * 2, radius * 2);
             box.Visible = false;
             box.SizeMode = PictureBoxSizeMode.Zoom;
         }
@@ -46,7 +48,7 @@ namespace taikoclone
         }
         public void Draw(double currentTime)
         {
-            double remainingTime = time - currentTime;
+            double remainingTime = time - currentTime; 
             if (remainingTime < -map.HitWindowGreat || remainingTime > map.Preempt)
             {
                 box.Visible = false;

@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.pictureBoxClickCircle = new System.Windows.Forms.PictureBox();
             this.GameUpdate = new System.Windows.Forms.Timer(this.components);
-            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxClickCircle)).BeginInit();
             this.SuspendLayout();
             // 
@@ -49,22 +48,12 @@
             this.GameUpdate.Interval = 10;
             this.GameUpdate.Tick += new System.EventHandler(this.GameUpdate_Tick);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(119, 201);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "label1";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBoxClickCircle);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -72,7 +61,6 @@
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxClickCircle)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -80,7 +68,6 @@
 
         private System.Windows.Forms.PictureBox pictureBoxClickCircle;
         private System.Windows.Forms.Timer GameUpdate;
-        private System.Windows.Forms.Label label1;
     }
 }
 

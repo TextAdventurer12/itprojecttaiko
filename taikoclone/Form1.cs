@@ -23,7 +23,7 @@ namespace taikoclone
         double hitWindow = 100;
         double hitWindowMiss = 100;
         double preempt = 500;
-        double clockRate = 0.2;
+        double clockRate = 0.3;
         Map map;
         public Form1()
         {
@@ -80,6 +80,9 @@ namespace taikoclone
             if (!(nextObject is null))
                 nextObject.box.BackColor = Color.White;
             map.DrawObjects(currentTime);
+            IEnumerable<Judgement> missedJudgements = map.CheckMissedObjects(currentTime);
+            foreach (Judgement missedJudgement in missedJudgements)
+                judgements.Add(missedJudgement);
         }
     }
     public enum Judgement

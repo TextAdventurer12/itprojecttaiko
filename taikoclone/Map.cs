@@ -18,6 +18,8 @@ namespace taikoclone
         public double HitWindowOk { get; private set; }
         public double HitWindowMiss => HitWindowGreat + HitWindowOk;
         public readonly List<HitObject> objects;
+        public List<HitObject> activeObjects
+            => objects.Where(obj => obj.Active).ToList();
         public Map(double preempt, double hitWindowGreat, double hitWindowOk, List<HitObject> objects)
         {
             Preempt = preempt;
@@ -29,14 +31,10 @@ namespace taikoclone
         }
         public Judgement? TapObject(double time, Keys key)
         {
-            if (objects.Where(obj => obj.time > time - HitWindowMiss).Count() == 0)
+            HitObject nextObject = NextObject(time - HitWindowMiss);
+            if (nextObject is null)
                 return null;
-            double timeToNextObject = objects.Min(obj => obj.time - time);
-            if (timeToNextObject == double.MaxValue)
-                return null;
-            if (timeToNextObject > HitWindowMiss)
-                return null;
-            HitObject nextObject = objects.First(obj => obj.time - time == timeToNextObject);
+            double timeToNextObject = nextObject.time - time;
             nextObject.box.Visible = false;
             nextObject.Active = false;
             Console.WriteLine(timeToNextObject);
@@ -59,15 +57,17 @@ namespace taikoclone
         }
         public HitObject NextObject(double time)
         {
-            if (objects.Where(obj => obj.Active).Count() == 0)
-                return null;
-            double timeToNextObject = objects.Min(obj => obj.time - time);
-            if (timeToNextObject == double.MaxValue)
-                return null;
-            if (timeToNextObject > HitWindowMiss)
-                return null;
-            HitObject nextObject = objects.First(obj => obj.time - time == timeToNextObject);
+            HitObject nextObject = objects.First(obj => obj.time > time);
             return nextObject;
+        }
+        public IEnumerable<Judgement> CheckMissedObjects(double time)
+        {
+            IEnumerable<HitObject> missedObjects = objects.Where(obj => obj.LastTime < time && obj.Active);
+            foreach (HitObject missedObject in missedObjects)
+            {
+                missedObject.Active = false;
+                yield return Judgement.Miss;
+            }
         }
     }
 }
