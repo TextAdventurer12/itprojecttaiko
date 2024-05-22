@@ -35,7 +35,6 @@ namespace taikoclone
             if (nextObject is null)
                 return null;
             double timeToNextObject = nextObject.time - time;
-            nextObject.box.Visible = false;
             nextObject.Active = false;
             Console.WriteLine(timeToNextObject);
             if (timeToNextObject > HitWindowMiss)
@@ -47,22 +46,24 @@ namespace taikoclone
                 return Judgement.Ok;
             return Judgement.Great;
         }
-        public void DrawObjects(double time)
+        public void DrawObjects(double time, Graphics target)
         {
-            bool shouldDraw(HitObject obj) => obj.time - time < Preempt && obj.time - time > -HitWindowMiss;
-            if (objects.Where(obj => shouldDraw(obj)).Count() == 0)
+            var drawableObjects = objects.Where(obj => obj.shouldDraw(time));
+            if (drawableObjects.Count() == 0)
                 return;
-            foreach (var obj in objects.Where(obj => shouldDraw(obj)))
-                obj.Draw(time);
+            foreach (var obj in drawableObjects)
+                obj.Draw(time, target);
         }
         public HitObject NextObject(double time)
         {
-            HitObject nextObject = objects.First(obj => obj.time > time);
-            return nextObject;
+            var futureObjects = objects.Where(obj => obj.time > time && obj.Active);
+            if (futureObjects.Count() == 0)
+                return null;
+            return futureObjects.First();
         }
         public IEnumerable<Judgement> CheckMissedObjects(double time)
         {
-            IEnumerable<HitObject> missedObjects = objects.Where(obj => obj.LastTime < time && obj.Active);
+            IEnumerable<HitObject> missedObjects = objects.Where(obj => obj.time < time - HitWindowMiss && obj.Active);
             foreach (HitObject missedObject in missedObjects)
             {
                 missedObject.Active = false;

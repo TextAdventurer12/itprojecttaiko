@@ -23,12 +23,12 @@ namespace taikoclone
         double hitWindow = 100;
         double hitWindowMiss = 100;
         double preempt = 500;
-        double clockRate = 0.3;
+        double clockRate = 1;
         Map map;
         public Form1()
         {
             InitializeComponent();
-            graphics = pictureBoxClickCircle.CreateGraphics();
+            graphics = canvas.CreateGraphics();
             map = new Map(preempt, hitWindow, hitWindow + hitWindowMiss, new List<HitObject>
             {
                 new HitObject(500, ObjectType.LEFT ),
@@ -37,9 +37,9 @@ namespace taikoclone
                 new HitObject(800, ObjectType.LEFT ),
                 new HitObject(900, ObjectType.RIGHT)
             });
-            foreach (var hitObject in map.objects)
-                this.Controls.Add(hitObject.box);
-            pictureBoxClickCircle.SendToBack();
+            //foreach (var hitObject in map.objects)
+            //    this.Controls.Add(hitObject.box);
+            canvas.SendToBack();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -65,24 +65,29 @@ namespace taikoclone
         private void GameUpdate_Tick(object sender, EventArgs e)
         {
             currentTime += GameUpdate.Interval * clockRate;
-            Rectangle rect = new Rectangle(0, 0, 100, 100);
-            graphics.FillPie(new SolidBrush(leftKey ? Color.Red : Color.DarkGray), rect, 90, 180);
-            graphics.FillPie(new SolidBrush(rightKey ? Color.Blue : Color.DarkGray), rect, 270, 180);
-            if (judgements.Count != 0)
-            {
-                graphics.FillEllipse(new SolidBrush(
-                    judgements.Last() == Judgement.Great ? Color.Cyan 
-                    : judgements.Last() == Judgement.Ok ? Color.Green
-                    : Color.IndianRed)
-                    , new Rectangle(33, 33, 33, 33));
-            }
-            HitObject nextObject = map.NextObject(currentTime);
-            if (!(nextObject is null))
-                nextObject.box.BackColor = Color.White;
-            map.DrawObjects(currentTime);
             IEnumerable<Judgement> missedJudgements = map.CheckMissedObjects(currentTime);
             foreach (Judgement missedJudgement in missedJudgements)
                 judgements.Add(missedJudgement);
+            canvas.Invalidate();
+        }
+
+        private void canvas_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.Clear(Color.Black);
+            Rectangle rect = new Rectangle(50, 50, 100, 100);
+            SolidBrush brush = new SolidBrush(leftKey ? Color.Red : Color.DarkGray);
+            e.Graphics.FillPie(brush, rect, 90, 180);
+            brush.Color = rightKey ? Color.Blue : Color.DarkGray;
+            e.Graphics.FillPie(brush, rect, 270, 180);
+            if (judgements.Count != 0)
+            {
+                e.Graphics.FillEllipse(new SolidBrush(
+                    judgements.Last() == Judgement.Great ? Color.Cyan
+                    : judgements.Last() == Judgement.Ok ? Color.Green
+                    : Color.IndianRed)
+                    , new Rectangle(33 + 50, 33 + 50, 33, 33));
+            }
+            map.DrawObjects(currentTime, e.Graphics);
         }
     }
     public enum Judgement

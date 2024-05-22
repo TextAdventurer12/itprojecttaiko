@@ -17,46 +17,34 @@ namespace taikoclone
         /// </summary>
         public double time;
 
-        private int y = 25;
+        private int y = 50;
         private int radius = 25;
         private Image sprite;
-        public PictureBox box;
         public ObjectType type;
         public Map map;
         public int Index;
         public bool Active = true;
-        public double LastTime
-            => time + map.HitWindowMiss;
 
         public HitObject(double time, ObjectType type)
         {
             this.time = time;
             this.type = type;
             sprite = type == ObjectType.LEFT ? Image.FromFile("../../hitcircleleft.png") : Image.FromFile("../../hitcircleright.png");
-            box = new PictureBox();
-            box.Image = sprite;
-            box.Location = new Point(0, 0);
-            box.Size = new Size(radius * 2, radius * 2);
-            box.Visible = false;
-            box.SizeMode = PictureBoxSizeMode.Zoom;
         }
-        private double xPosition(double remainingTime)
+        private double xPosition(double currentTime)
         {
+            double remainingTime = time - currentTime;
             // proportion of duration remaining
-            double dR = remainingTime / map.Preempt;
+            double dR = remainingTime / (map.Preempt + map.HitWindowMiss);
             return (1 - dR) * Form1.playfieldStart + dR * Form1.playfieldEnd;
         }
-        public void Draw(double currentTime)
+        public void Draw(double currentTime, Graphics target)
         {
-            double remainingTime = time - currentTime; 
-            if (remainingTime < -map.HitWindowGreat || remainingTime > map.Preempt)
-            {
-                box.Visible = false;
+            if (!shouldDraw(currentTime))
                 return;
-            }
-            else box.Visible = true;
-            int x = (int)xPosition(remainingTime);
-            box.Location = new Point(x, y);
+            double remainingTime = time - currentTime; 
+            int x = (int)xPosition(currentTime);
+            target.DrawImage(sprite, new Rectangle(x, y, radius * 2, radius * 2));
         }
         public HitObject Previous(int index)
         {
@@ -70,6 +58,9 @@ namespace taikoclone
                 return null;
             return map.objects[Index + index];
         }
+        public bool shouldDraw(double time) 
+            => this.time - time < map.Preempt && this.time - time > -map.HitWindowMiss && this.Active;
+
     }
     public enum ObjectType
     {
