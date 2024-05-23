@@ -15,39 +15,39 @@ namespace taikoclone
     {
         public static double playfieldStart = 112;
         public static double playfieldEnd = 700;
-        bool leftKey;
-        bool rightKey;
+        Dictionary<Keys, bool> keyboard;
         double currentTime;
-        Graphics graphics;
         List<Judgement> judgements = new List<Judgement>();
         double hitWindow = 100;
         double hitWindowMiss = 100;
-        double preempt = 500;
+        double preempt = 200;
         double clockRate = 1;
         Map map;
         public Form1()
         {
             InitializeComponent();
-            graphics = canvas.CreateGraphics();
             map = new Map(preempt, hitWindow, hitWindow + hitWindowMiss, new List<HitObject>
             {
-                new HitObject(500, ObjectType.LEFT ),
-                new HitObject(600, ObjectType.LEFT ),
-                new HitObject(700, ObjectType.LEFT ),
-                new HitObject(800, ObjectType.LEFT ),
-                new HitObject(900, ObjectType.RIGHT)
+                new HitObject(100, ObjectType.LEFT ),
+                new HitObject(150, ObjectType.LEFT ),
+                new HitObject(200, ObjectType.LEFT ),
+                new HitObject(250, ObjectType.LEFT ),
+                new HitObject(350, ObjectType.RIGHT)
             });
-            //foreach (var hitObject in map.objects)
-            //    this.Controls.Add(hitObject.box);
+            keyboard = new Dictionary<Keys, bool>
+            {
+                { Keys.D, false },
+                { Keys.F, false },
+                { Keys.J, false },
+                { Keys.K, false }
+            };
             canvas.SendToBack();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.R)
-                leftKey = true;
-            if (e.KeyCode == Keys.T)
-                rightKey = true;
+            if (keyboard.Keys.Contains(e.KeyCode))
+                keyboard[e.KeyCode] = true;
 
             Judgement? outcome = map.TapObject(currentTime, e.KeyCode);
             if (!(outcome is null))
@@ -56,10 +56,8 @@ namespace taikoclone
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.R)
-                leftKey = false;
-            if (e.KeyCode == Keys.T)
-                rightKey = false;
+            if (keyboard.Keys.Contains(e.KeyCode))
+                keyboard[e.KeyCode] = false;
         }
 
         private void GameUpdate_Tick(object sender, EventArgs e)
@@ -75,9 +73,11 @@ namespace taikoclone
         {
             e.Graphics.Clear(Color.Black);
             Rectangle rect = new Rectangle(50, 50, 100, 100);
-            SolidBrush brush = new SolidBrush(leftKey ? Color.Red : Color.DarkGray);
+            SolidBrush brush = new SolidBrush(Color.DarkGray);
+            if (keyboard[Keys.F] || keyboard[Keys.D])
+                brush.Color = Color.Red;
             e.Graphics.FillPie(brush, rect, 90, 180);
-            brush.Color = rightKey ? Color.Blue : Color.DarkGray;
+            brush.Color = (keyboard[Keys.J] || keyboard[Keys.K]) ? Color.Blue : Color.DarkGray;
             e.Graphics.FillPie(brush, rect, 270, 180);
             if (judgements.Count != 0)
             {
