@@ -42,6 +42,7 @@ namespace taikoclone
                 { Keys.K, false }
             };
             canvas.SendToBack();
+            MapParser.FromFile("../../2144235 SHIKI - Pure Ruby/SHIKI - Pure Ruby (youtune3) [Kantan].osu");
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
