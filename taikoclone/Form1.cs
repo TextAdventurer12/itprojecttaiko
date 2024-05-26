@@ -18,22 +18,15 @@ namespace taikoclone
         Dictionary<Keys, bool> keyboard;
         double currentTime;
         List<Judgement> judgements = new List<Judgement>();
-        double hitWindow = 100;
-        double hitWindowMiss = 100;
-        double preempt = 200;
+        public const double hitWindow = 100;
+        public const double hitWindowMiss = 100;
+        public const double preempt = 200;
         double clockRate = 1;
         Map map;
         public Form1()
         {
             InitializeComponent();
-            map = new Map(preempt, hitWindow, hitWindow + hitWindowMiss, new List<HitObject>
-            {
-                new HitObject(100, ObjectType.LEFT ),
-                new HitObject(150, ObjectType.LEFT ),
-                new HitObject(200, ObjectType.LEFT ),
-                new HitObject(250, ObjectType.LEFT ),
-                new HitObject(350, ObjectType.RIGHT)
-            });
+            map = MapParser.FromFile("../../2144235 SHIKI - Pure Ruby/SHIKI - Pure Ruby (youtune3) [Kantan].osu");
             keyboard = new Dictionary<Keys, bool>
             {
                 { Keys.D, false },
@@ -42,7 +35,6 @@ namespace taikoclone
                 { Keys.K, false }
             };
             canvas.SendToBack();
-            MapParser.FromFile("../../2144235 SHIKI - Pure Ruby/SHIKI - Pure Ruby (youtune3) [Kantan].osu");
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
