@@ -16,12 +16,14 @@ namespace taikoclone
         public static double playfieldStart = 112;
         public static double playfieldEnd = 700;
         Dictionary<Keys, bool> keyboard;
+        public static List<Keys> rightKeys = new List<Keys> { Keys.J, Keys.K };
+        public static List<Keys> leftKeys  = new List<Keys> { Keys.D, Keys.F };
         double currentTime;
         List<Judgement> judgements = new List<Judgement>();
         public const double hitWindow = 100;
         public const double hitWindowMiss = 100;
-        public const double preempt = 200;
-        double clockRate = 1;
+        public const double preempt = 1000;
+        double clockRate = 15;
         Map map;
         public Form1()
         {

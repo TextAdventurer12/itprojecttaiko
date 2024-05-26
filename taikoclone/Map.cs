@@ -32,15 +32,15 @@ namespace taikoclone
         public Judgement? TapObject(double time, Keys key)
         {
             HitObject nextObject = NextObject(time - HitWindowMiss);
-            if (nextObject is null)
+            if (nextObject is null || (!Form1.rightKeys.Contains(key) && ! Form1.leftKeys.Contains(key)))
                 return null;
             double timeToNextObject = nextObject.time - time;
             nextObject.Active = false;
-            Console.WriteLine(timeToNextObject);
+            Console.WriteLine(activeObjects.Count());
             if (timeToNextObject > HitWindowMiss)
                 return Judgement.Miss;
-            if (nextObject.type == ObjectType.LEFT && key == Keys.T
-                || nextObject.type == ObjectType.RIGHT && key == Keys.R)
+            if (nextObject.type == ObjectType.LEFT && Form1.rightKeys.Contains(key)
+                || nextObject.type == ObjectType.RIGHT && Form1.leftKeys.Contains(key))
                 return Judgement.Miss;
             if (timeToNextObject < -HitWindowGreat || timeToNextObject > HitWindowGreat)
                 return Judgement.Ok;
