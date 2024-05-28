@@ -23,7 +23,7 @@ namespace taikoclone
         public const double hitWindow = 100;
         public const double hitWindowMiss = 100;
         public const double preempt = 1000;
-        double clockRate = 15;
+        double clockRate = 10;
         Map map;
         public Form1()
         {

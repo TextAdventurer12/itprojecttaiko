@@ -25,17 +25,21 @@ namespace taikoclone
         public int Index;
         public bool Active = true;
 
+        public double drawTimeStart
+            => time - map.Preempt;
+        public double drawTimeEnd
+            => time + map.HitWindowMiss;
+
         public HitObject(double time, ObjectType type)
         {
             this.time = time;
             this.type = type;
             sprite = type == ObjectType.LEFT ? Image.FromFile("../../hitcircleleft.png") : Image.FromFile("../../hitcircleright.png");
         }
-        private double xPosition(double currentTime)
+        public double xPosition(double currentTime)
         {
-            double remainingTime = time - currentTime;
             // proportion of duration remaining
-            double dR = remainingTime / (map.Preempt + map.HitWindowMiss);
+            double dR = (currentTime - drawTimeStart) / (drawTimeStart - drawTimeEnd);
             return (1 - dR) * Form1.playfieldStart + dR * Form1.playfieldEnd;
         }
         public void Draw(double currentTime, Graphics target)

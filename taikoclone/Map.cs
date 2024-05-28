@@ -20,6 +20,7 @@ namespace taikoclone
         public readonly List<HitObject> objects;
         public List<HitObject> activeObjects
             => objects.Where(obj => obj.Active).ToList();
+        System.Diagnostics.Stopwatch watch;
         public Map(double preempt, double hitWindowGreat, double hitWindowOk, List<HitObject> objects)
         {
             Preempt = preempt;
@@ -35,6 +36,8 @@ namespace taikoclone
             if (nextObject is null || (!Form1.rightKeys.Contains(key) && ! Form1.leftKeys.Contains(key)))
                 return null;
             double timeToNextObject = nextObject.time - time;
+            if (timeToNextObject > HitWindowMiss * 2)
+                return null;
             nextObject.Active = false;
             Console.WriteLine(activeObjects.Count());
             if (timeToNextObject > HitWindowMiss)
@@ -48,9 +51,11 @@ namespace taikoclone
         }
         public void DrawObjects(double time, Graphics target)
         {
-            var drawableObjects = objects.Where(obj => obj.shouldDraw(time));
+            var drawableObjects = objects.Where(obj => obj.shouldDraw(time)).ToList();
             if (drawableObjects.Count() == 0)
                 return;
+            if (drawableObjects.Count() != objects.Where(obj => obj.shouldDraw(time - 10)).Count())
+                Console.WriteLine(drawableObjects[0].xPosition(time));
             foreach (var obj in drawableObjects)
                 obj.Draw(time, target);
         }
