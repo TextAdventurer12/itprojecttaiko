@@ -17,7 +17,6 @@ namespace taikoclone
         /// </summary>
         public double time;
 
-        private int y = 50;
         private int radius = 25;
         private Image sprite;
         public ObjectType type;
@@ -39,8 +38,9 @@ namespace taikoclone
         public double xPosition(double currentTime)
         {
             // proportion of duration remaining
-            double dR = (currentTime - drawTimeStart) / (drawTimeStart - drawTimeEnd);
-            return (1 - dR) * Form1.playfieldStart + dR * Form1.playfieldEnd;
+            double dR = (currentTime - drawTimeStart) / (time - drawTimeStart);
+            // linearly interpolate between the start of the playfield and the end
+            return dR * Form1.playfieldStart + (1 - dR) * Form1.playfieldEnd;
         }
         public void Draw(double currentTime, Graphics target)
         {
@@ -48,7 +48,7 @@ namespace taikoclone
                 return;
             double remainingTime = time - currentTime; 
             int x = (int)xPosition(currentTime);
-            target.DrawImage(sprite, new Rectangle(x, y, radius * 2, radius * 2));
+            target.DrawImage(sprite, new Rectangle(x, Form1.tapCircleY + Form1.tapCircleRadius - radius, radius * 2, radius * 2));
         }
         public HitObject Previous(int index)
         {

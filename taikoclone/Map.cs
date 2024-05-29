@@ -39,7 +39,6 @@ namespace taikoclone
             if (timeToNextObject > HitWindowMiss * 2)
                 return null;
             nextObject.Active = false;
-            Console.WriteLine(activeObjects.Count());
             if (timeToNextObject > HitWindowMiss)
                 return Judgement.Miss;
             if (nextObject.type == ObjectType.LEFT && Form1.rightKeys.Contains(key)
@@ -54,8 +53,6 @@ namespace taikoclone
             var drawableObjects = objects.Where(obj => obj.shouldDraw(time)).ToList();
             if (drawableObjects.Count() == 0)
                 return;
-            if (drawableObjects.Count() != objects.Where(obj => obj.shouldDraw(time - 10)).Count())
-                Console.WriteLine(drawableObjects[0].xPosition(time));
             foreach (var obj in drawableObjects)
                 obj.Draw(time, target);
         }
