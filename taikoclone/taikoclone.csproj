@@ -59,6 +59,8 @@
     <Compile Include="Map.cs" />
     <Compile Include="MapDownloader.cs" />
     <Compile Include="MapParser.cs" />
+    <Compile Include="Network\FileWebRequest.cs" />
+    <Compile Include="Network\WebRequest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
