@@ -24,7 +24,7 @@ namespace taikoclone.Network
         public FileWebRequest(string filename, string url)
             : base (url)
         {
-            Timout *= 2;
+            Timeout *= 2;
             Filename = filename;
         }
     }

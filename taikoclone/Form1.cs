@@ -32,6 +32,7 @@ namespace taikoclone
         {
             InitializeComponent();
             map = MapParser.FromFile("../../2144235 SHIKI - Pure Ruby/SHIKI - Pure Ruby (youtune3) [Kantan].osu");
+            MapDownloader.GetMap(4630968);
             keyboard = new Dictionary<Keys, bool>
             {
                 { Keys.D, false },

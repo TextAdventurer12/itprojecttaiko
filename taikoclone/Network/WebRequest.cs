@@ -16,6 +16,15 @@ namespace taikoclone.Network
     internal class WebRequest
     {
         public string Url;
+        public int Timeout = 10000;
+        public const int BUFFER_SIZE = 32768;
+
+        private HttpResponseMessage response;
+        public Stream ResponseStream { get; private set; }
+        private int responseBytesRead;
+        public bool Completed = false;
+
+
         private static readonly HttpClient client = new HttpClient(new HttpClientHandler
         {
             Credentials = CredentialCache.DefaultCredentials,
@@ -23,11 +32,8 @@ namespace taikoclone.Network
         }
         )
         {
-            // Timeout is controlled manually through cancellation tokens because
-            // HttpClient does not properly timeout while reading chunked data
-            Timeout = System.Threading.Timeout.InfiniteTimeSpan
+            Timeout = new System.TimeSpan(100000)
         };
-        private HttpResponseMessage response;
         public WebRequest(string url, params object[] args)
         {
             if (!string.IsNullOrEmpty(url))
@@ -35,6 +41,7 @@ namespace taikoclone.Network
         }
         public void Perform()
         {
+            ResponseStream = CreateOutputStream();
             internalPerform();
         }
         private async void internalPerform()
@@ -44,9 +51,37 @@ namespace taikoclone.Network
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
             using (request)
             {
-                response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, default).ConfigureAwait(false);
-
+                var task = client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, default);
+                task.RunSynchronously();
+                while (!task.IsCompleted)
+                    Console.WriteLine(task.Status);
+                response = task.Result;
+                await beginResponse().ConfigureAwait(false);
             }
         }
+        private async Task beginResponse()
+        {
+            using (var responseStream = await response.Content.ReadAsStreamAsync())
+            {
+                byte[] buffer = new byte[BUFFER_SIZE];
+                while (true)
+                {
+                    int read = await responseStream.ReadAsync(buffer, 0, BUFFER_SIZE);
+                    Console.WriteLine(read);
+                    if (read > 0)
+                    {
+                        await ResponseStream.WriteAsync(buffer, 0, BUFFER_SIZE);
+                        responseBytesRead += read;
+                    }
+                    else
+                    {
+                        ResponseStream.Seek(0, SeekOrigin.Begin);
+                        Completed = true;
+                        break;
+                    }
+                }
+            }
+        }
+        protected virtual Stream CreateOutputStream() => new MemoryStream();    
     }
 }

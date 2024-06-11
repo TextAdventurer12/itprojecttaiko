@@ -11,7 +11,8 @@ namespace taikoclone
     {
         public static Map FromFile(string filepath)
         {
-            Dictionary<string, List<string>> sections = ReadFile(filepath);
+            StreamReader stream = new StreamReader(filepath);
+            Dictionary<string, List<string>> sections = ReadFile(stream);
             return new Map(Form1.preempt, Form1.hitWindow, Form1.hitWindow + Form1.hitWindowMiss, ParsePackages(sections).ToList());
         }
         private static IEnumerable<HitObject> ParsePackages(Dictionary<string, List<string>> sections)
@@ -25,7 +26,7 @@ namespace taikoclone
                 yield return new HitObject(double.Parse(fields[2]), fields[4] == "0" ? ObjectType.LEFT : ObjectType.RIGHT);
             }
         }
-        private static Dictionary<string, List<string>> ReadFile(string filepath)
+        private static Dictionary<string, List<string>> ReadFile(StreamReader stream)
         {
             // Declare variables
             Dictionary<string, List<string>> sections = new Dictionary<string, List<string>>();
@@ -33,8 +34,7 @@ namespace taikoclone
             string header = "";
             List<string> content = new List<string>();
             // Read in data from file
-            StreamReader reader = new StreamReader(filepath);
-            while ((line = reader.ReadLine()) != null)
+            while ((line = stream.ReadLine()) != null)
             {
                 // All lines containing [ indicate a header
                 if (line.Contains("["))
