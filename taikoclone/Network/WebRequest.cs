@@ -30,10 +30,7 @@ namespace taikoclone.Network
             Credentials = CredentialCache.DefaultCredentials,
             AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
         }
-        )
-        {
-            Timeout = new System.TimeSpan(100000)
-        };
+        );
         public WebRequest(string url, params object[] args)
         {
             if (!string.IsNullOrEmpty(url))
@@ -51,11 +48,9 @@ namespace taikoclone.Network
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
             using (request)
             {
-                var task = client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, default);
-                task.RunSynchronously();
-                while (!task.IsCompleted)
-                    Console.WriteLine(task.Status);
-                response = task.Result;
+                Console.WriteLine("gyatt");
+                response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, default).ConfigureAwait(false);
+                Console.WriteLine("rizz");
                 await beginResponse().ConfigureAwait(false);
             }
         }
@@ -82,6 +77,6 @@ namespace taikoclone.Network
                 }
             }
         }
-        protected virtual Stream CreateOutputStream() => new MemoryStream();    
+        protected virtual Stream CreateOutputStream() => new MemoryStream();
     }
 }
