@@ -13,7 +13,7 @@ namespace taikoclone
         {
             StreamReader stream = new StreamReader(filepath);
             Dictionary<string, List<string>> sections = ReadFile(stream);
-            return new Map(Form1.preempt, Form1.hitWindow, Form1.hitWindow + Form1.hitWindowMiss, ParsePackages(sections).ToList());
+            return new Map(Gameplay.preempt, Gameplay.hitWindow, Gameplay.hitWindow + Gameplay.hitWindowMiss, ParsePackages(sections).ToList());
         }
         private static IEnumerable<HitObject> ParsePackages(Dictionary<string, List<string>> sections)
         {

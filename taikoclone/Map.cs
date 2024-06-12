@@ -20,7 +20,6 @@ namespace taikoclone
         public readonly List<HitObject> objects;
         public List<HitObject> activeObjects
             => objects.Where(obj => obj.Active).ToList();
-        System.Diagnostics.Stopwatch watch;
         public Map(double preempt, double hitWindowGreat, double hitWindowOk, List<HitObject> objects)
         {
             Preempt = preempt;
@@ -33,7 +32,7 @@ namespace taikoclone
         public Judgement? TapObject(double time, Keys key)
         {
             HitObject nextObject = NextObject(time - HitWindowMiss);
-            if (nextObject is null || (!Form1.rightKeys.Contains(key) && ! Form1.leftKeys.Contains(key)))
+            if (nextObject is null || (!Gameplay.rightKeys.Contains(key) && ! Gameplay.leftKeys.Contains(key)))
                 return null;
             double timeToNextObject = nextObject.time - time;
             if (timeToNextObject > HitWindowMiss * 2)
@@ -41,8 +40,8 @@ namespace taikoclone
             nextObject.Active = false;
             if (timeToNextObject > HitWindowMiss)
                 return Judgement.Miss;
-            if (nextObject.type == ObjectType.LEFT && Form1.rightKeys.Contains(key)
-                || nextObject.type == ObjectType.RIGHT && Form1.leftKeys.Contains(key))
+            if (nextObject.type == ObjectType.LEFT && Gameplay.rightKeys.Contains(key)
+                || nextObject.type == ObjectType.RIGHT && Gameplay.leftKeys.Contains(key))
                 return Judgement.Miss;
             if (timeToNextObject < -HitWindowGreat || timeToNextObject > HitWindowGreat)
                 return Judgement.Ok;

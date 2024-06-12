@@ -48,9 +48,7 @@ namespace taikoclone.Network
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
             using (request)
             {
-                Console.WriteLine("gyatt");
                 response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, default).ConfigureAwait(false);
-                Console.WriteLine("rizz");
                 await beginResponse().ConfigureAwait(false);
             }
         }

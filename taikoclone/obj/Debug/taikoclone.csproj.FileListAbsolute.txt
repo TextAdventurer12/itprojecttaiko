@@ -14,9 +14,10 @@ K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\bin\Debug\taikoclone.exe
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\bin\Debug\taikoclone.pdb
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.csproj.AssemblyReference.cache
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.csproj.SuggestedBindingRedirects.cache
-K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.Form1.resources
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.Properties.Resources.resources
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.csproj.GenerateResource.cache
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.csproj.CoreCompileInputs.cache
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.exe
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.pdb
+K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.Gameplay.resources
+K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.Menu.resources
