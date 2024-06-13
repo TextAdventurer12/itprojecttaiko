@@ -8,16 +8,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using taikoclone.Utils;
 
 namespace taikoclone
 {
     public partial class Menu : Form
     {
         private List<MapInfo> library;
+        private int selectedIndex = 0;
+        private SolidBrush brush;
         public Menu()
         {
             InitializeComponent();
             library = loadLibrary().ToList();
+            brush = new SolidBrush(Color.Black);
+            Console.WriteLine("test   ".RemoveEndingWhitespace());
         }
         private IEnumerable<MapInfo> loadLibrary()
         {
@@ -26,20 +31,14 @@ namespace taikoclone
                 foreach (string mapPath in Directory.GetFiles(set))
                 {
                     string map = Path.GetFileName(mapPath);
-                    Console.WriteLine(map);
                     if (!map.Contains(".osu"))
                         continue;
                     string[] halves = map.Split('[');
-                    string name = halves[0];
-                    string difficultyName = halves[1].Split('.')[0].Replace("]", "");
+                    string name = halves[0].RemoveEndingWhitespace();
+                    string difficultyName = halves[1].Split('.')[0].Replace("]", "").RemoveEndingWhitespace();
                     yield return new MapInfo(name, difficultyName);
                 }
             }
-        }
-
-        private void Menu_KeyPress(object sender, KeyPressEventArgs e)
-        {
-
         }
 
         private void tick_Tick(object sender, EventArgs e)
@@ -49,13 +48,33 @@ namespace taikoclone
 
         private void canvas_Paint(object sender, PaintEventArgs e)
         {
-
-            Pen pen = new Pen(new SolidBrush(Color.Black));
             Font drawFont = new Font("Arial", 16);
             e.Graphics.Clear(Color.White);
-            Console.WriteLine(library.Count);
             for (int i = 0; i < library.Count; i++)
-                e.Graphics.DrawString($"{library[i].Name} [{library[i].DifficultyName}]", drawFont, new SolidBrush(Color.Black), new Point(75, 50 + i * 20));
+            {
+                if (i == selectedIndex)
+                    brush.Color = Color.Blue;
+                else
+                    brush.Color = Color.Black;
+                e.Graphics.DrawString($"{library[i].Name} [{library[i].DifficultyName}]", drawFont, brush, new Point(75, 50 + i * 20));
+            }
+        }
+
+        private void Menu_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Down)
+                selectedIndex++;
+            if (e.KeyCode == Keys.Up)
+                selectedIndex--;
+            if (selectedIndex < 0)
+                selectedIndex = library.Count - 1;
+            selectedIndex %= library.Count;
+            if (e.KeyCode != Keys.Enter)
+                return;
+            Gameplay gameplay = new Gameplay(library[selectedIndex].map);
+            this.Hide();
+            gameplay.ShowDialog();
+            this.Close();
         }
     }
 }

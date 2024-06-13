@@ -31,6 +31,7 @@ namespace taikoclone.Network
             AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
         }
         );
+
         public WebRequest(string url, params object[] args)
         {
             if (!string.IsNullOrEmpty(url))

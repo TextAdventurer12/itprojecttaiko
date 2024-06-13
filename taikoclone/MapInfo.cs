@@ -11,7 +11,7 @@ namespace taikoclone
         public const string MapFolder = "../../Maps/";
         public string Name;
         public string DifficultyName;
-        public string Filepath => $"{MapFolder}{Name}/{Name}[{DifficultyName}].osu";
+        public string Filepath => $"{MapFolder}{Name}/{Name} [{DifficultyName}].osu";
         private Map mapData;
         public Map map
         {

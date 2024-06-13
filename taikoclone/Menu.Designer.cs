@@ -36,6 +36,7 @@
             // 
             // tick
             // 
+            this.tick.Enabled = true;
             this.tick.Tick += new System.EventHandler(this.tick_Tick);
             // 
             // canvas
@@ -53,9 +54,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.canvas);
+            this.KeyPreview = true;
             this.Name = "Menu";
             this.Text = "Menu";
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Menu_KeyPress);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Menu_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
             this.ResumeLayout(false);
 
