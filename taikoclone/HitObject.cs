@@ -18,7 +18,8 @@ namespace taikoclone
         public double time;
 
         private int radius = 25;
-        private Image sprite;
+        private SolidBrush colour;
+        private Pen whitePen = new Pen(new SolidBrush(Color.White));
         public ObjectType type;
         public Map map;
         public int Index;
@@ -33,7 +34,8 @@ namespace taikoclone
         {
             this.time = time;
             this.type = type;
-            sprite = type == ObjectType.LEFT ? Image.FromFile("../../hitcircleleft.png") : Image.FromFile("../../hitcircleright.png");
+            colour = new SolidBrush(Color.White);
+            colour.Color = type == ObjectType.LEFT ? Color.Red : Color.Blue;
         }
         public double xPosition(double currentTime)
         {
@@ -46,9 +48,12 @@ namespace taikoclone
         {
             if (!shouldDraw(currentTime))
                 return;
-            double remainingTime = time - currentTime; 
+            double remainingTime = time - currentTime;
             int x = (int)xPosition(currentTime);
-            target.DrawImage(sprite, new Rectangle(x, Gameplay.tapCircleY + Gameplay.tapCircleRadius - radius, radius * 2, radius * 2));
+            Rectangle drawBox = new Rectangle(x, Gameplay.tapCircleY + Gameplay.tapCircleRadius - radius, radius * 2, radius * 2);
+            if (remainingTime < map.HitWindowMiss)
+                target.DrawEllipse(whitePen, drawBox);
+            target.FillEllipse(colour, drawBox);
         }
         public HitObject Previous(int index)
         {
@@ -64,7 +69,6 @@ namespace taikoclone
         }
         public bool shouldDraw(double time) 
             => this.time - time < map.Preempt && this.time - time > -map.HitWindowMiss && this.Active;
-
     }
     public enum ObjectType
     {

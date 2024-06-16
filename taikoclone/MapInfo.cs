@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace taikoclone
 {
-    internal class MapInfo
+    public class MapInfo
     {
         public const string MapFolder = "../../Maps/";
         public string Name;
         public string DifficultyName;
         public string Filepath => $"{MapFolder}{Name}/{Name} [{DifficultyName}].osu";
+        public string AudioFile => $"{MapFolder}{Name}/audio.mp3";
         private Map mapData;
         public Map map
         {

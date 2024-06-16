@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using NAudio;
+using NAudio.Wave;
 
 namespace taikoclone
 {
@@ -40,8 +42,9 @@ namespace taikoclone
 
         /// <summary>
         /// The current tick that the form is on
+        /// The initial value is an offset used to ensure audio is synced
         /// </summary>
-        double currentTime;
+        double currentTime = 40;
 
         /// <summary>
         /// The judgements obtained throughout gameplay
@@ -78,17 +81,19 @@ namespace taikoclone
         /// <summary>
         /// The clock rate of gameplay
         /// </summary>
-        double clockRate = 10;
+        double clockRate = 1;
 
         /// <summary>
         /// The current map being played
         /// </summary>
         Map map;
 
-        public Gameplay(Map selectedMap)
+        IWavePlayer waveOutDevice;
+        System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+        public Gameplay(MapInfo selectedMap)
         {
             InitializeComponent();
-            map = selectedMap;
+            map = selectedMap.map;
             keyboard = new Dictionary<Keys, bool>
             {
                 { Keys.D, false },
@@ -97,6 +102,11 @@ namespace taikoclone
                 { Keys.K, false }
             };
             canvas.SendToBack();
+            waveOutDevice = new WaveOut();
+            AudioFileReader audioFileReader = new AudioFileReader(selectedMap.AudioFile);
+            waveOutDevice.Init(audioFileReader);
+            waveOutDevice.Play();
+            watch.Start();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -120,7 +130,10 @@ namespace taikoclone
 
         private void GameUpdate_Tick(object sender, EventArgs e)
         {
-            currentTime += GameUpdate.Interval * clockRate;
+            if (currentTime == 0)
+                waveOutDevice.Play();
+            currentTime += watch.ElapsedMilliseconds * clockRate;
+            watch.Restart();
             IEnumerable<Judgement> missedJudgements = map.CheckMissedObjects(currentTime);
             foreach (Judgement missedJudgement in missedJudgements)
                 judgements.Add(missedJudgement);

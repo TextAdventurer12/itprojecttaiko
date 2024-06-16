@@ -16,7 +16,7 @@ namespace taikoclone
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Menu());
+            Application.Run(new Gameplay(new Menu().library[0]));
         }
     }
 }

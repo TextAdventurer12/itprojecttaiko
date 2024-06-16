@@ -14,7 +14,7 @@ namespace taikoclone
 {
     public partial class Menu : Form
     {
-        private List<MapInfo> library;
+        public List<MapInfo> library;
         private int selectedIndex = 0;
         private SolidBrush brush;
         public Menu()
@@ -71,7 +71,7 @@ namespace taikoclone
             selectedIndex %= library.Count;
             if (e.KeyCode != Keys.Enter)
                 return;
-            Gameplay gameplay = new Gameplay(library[selectedIndex].map);
+            Gameplay gameplay = new Gameplay(library[selectedIndex]);
             this.Hide();
             gameplay.ShowDialog();
             this.Close();
