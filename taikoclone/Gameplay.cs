@@ -39,17 +39,20 @@ namespace taikoclone
         /// the keys which map to a LEFT circle
         /// </summary>
         public static List<Keys> leftKeys  = new List<Keys> { Keys.D, Keys.F };
+        public const double initial_delay = 3000;
+        public const double offset = 0;
 
         /// <summary>
         /// The current tick that the form is on
         /// The initial value is an offset used to ensure audio is synced
         /// </summary>
-        double currentTime = 40;
+        double currentTime = -initial_delay;
 
         /// <summary>
         /// The judgements obtained throughout gameplay
         /// </summary>
         List<Judgement> judgements = new List<Judgement>();
+        List<double> hitTimes = new List<double>();
 
         /// <summary>
         /// The size, in ms, of the great hit window
@@ -66,7 +69,7 @@ namespace taikoclone
         /// <summary>
         /// The amount of ms that circles are visible for before they should be pressed
         /// </summary>
-        public const double preempt = 1000;
+        public const double preempt = 2000;
 
         /// <summary>
         /// The size of the input circle
@@ -89,7 +92,7 @@ namespace taikoclone
         Map map;
 
         IWavePlayer waveOutDevice;
-        System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+        System.Diagnostics.Stopwatch cumWatch = new System.Diagnostics.Stopwatch();
         public Gameplay(MapInfo selectedMap)
         {
             InitializeComponent();
@@ -105,8 +108,7 @@ namespace taikoclone
             waveOutDevice = new WaveOut();
             AudioFileReader audioFileReader = new AudioFileReader(selectedMap.AudioFile);
             waveOutDevice.Init(audioFileReader);
-            waveOutDevice.Play();
-            watch.Start();
+            cumWatch.Start();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -114,11 +116,14 @@ namespace taikoclone
             if (keyboard.Keys.Contains(e.KeyCode))
                 keyboard[e.KeyCode] = true;
 
-            Judgement? outcome = map.TapObject(currentTime, e.KeyCode);
-            if (!(outcome is null))
+            (Judgement? judgement, double error) outcome = map.TapObject(currentTime, e.KeyCode);
+            if (!(outcome.judgement is null))
             {
-                judgements.Add(outcome.Value);
-                Console.WriteLine($"{CurrentAccuracy() * 100:F2}");
+                judgements.Add(outcome.judgement.Value);
+                hitTimes.Add(outcome.error);
+                //Console.WriteLine($"{CurrentAccuracy() * 100:F2}");
+                Console.WriteLine($"Real: {cumWatch.ElapsedMilliseconds}. Expected: {currentTime / clockRate}");
+                Console.WriteLine($"Error: {outcome.error}, Current Mean Error: {hitTimes.Average()}");
             }
         }
 
@@ -130,10 +135,9 @@ namespace taikoclone
 
         private void GameUpdate_Tick(object sender, EventArgs e)
         {
-            if (currentTime == 0)
+            currentTime = cumWatch.ElapsedMilliseconds - initial_delay;
+            if (currentTime > offset - 25 && currentTime < offset + 25 && !(waveOutDevice.PlaybackState == PlaybackState.Playing))
                 waveOutDevice.Play();
-            currentTime += watch.ElapsedMilliseconds * clockRate;
-            watch.Restart();
             IEnumerable<Judgement> missedJudgements = map.CheckMissedObjects(currentTime);
             foreach (Judgement missedJudgement in missedJudgements)
                 judgements.Add(missedJudgement);

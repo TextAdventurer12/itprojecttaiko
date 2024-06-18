@@ -29,23 +29,23 @@ namespace taikoclone
             foreach (var hitObject in objects)
                 hitObject.map = this;
         }
-        public Judgement? TapObject(double time, Keys key)
+        public (Judgement? judgement, double error) TapObject(double time, Keys key)
         {
             HitObject nextObject = NextObject(time - HitWindowMiss);
             if (nextObject is null || (!Gameplay.rightKeys.Contains(key) && ! Gameplay.leftKeys.Contains(key)))
-                return null;
+                return (null, -1);
             double timeToNextObject = nextObject.time - time;
             if (timeToNextObject > HitWindowMiss * 2)
-                return null;
+                return (null, -1);
             nextObject.Active = false;
             if (timeToNextObject > HitWindowMiss)
-                return Judgement.Miss;
+                return (Judgement.Miss, timeToNextObject);
             if (nextObject.type == ObjectType.LEFT && Gameplay.rightKeys.Contains(key)
                 || nextObject.type == ObjectType.RIGHT && Gameplay.leftKeys.Contains(key))
-                return Judgement.Miss;
+                return (Judgement.Miss, timeToNextObject);
             if (timeToNextObject < -HitWindowGreat || timeToNextObject > HitWindowGreat)
-                return Judgement.Ok;
-            return Judgement.Great;
+                return (Judgement.Ok, timeToNextObject);
+            return (Judgement.Great, timeToNextObject);
         }
         public void DrawObjects(double time, Graphics target)
         {

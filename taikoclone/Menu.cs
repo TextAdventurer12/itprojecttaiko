@@ -22,7 +22,6 @@ namespace taikoclone
             InitializeComponent();
             library = loadLibrary().ToList();
             brush = new SolidBrush(Color.Black);
-            Console.WriteLine("test   ".RemoveEndingWhitespace());
         }
         private IEnumerable<MapInfo> loadLibrary()
         {
