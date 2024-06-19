@@ -20,6 +20,8 @@ namespace taikoclone
         public readonly List<HitObject> objects;
         public List<HitObject> activeObjects
             => objects.Where(obj => obj.Active).ToList();
+
+        public double EndTime => objects.Last().time;
         public Map(double preempt, double hitWindowGreat, double hitWindowOk, List<HitObject> objects)
         {
             Preempt = preempt;
@@ -70,6 +72,24 @@ namespace taikoclone
                 missedObject.Active = false;
                 yield return Judgement.Miss;
             }
+        }
+        private IEnumerable<double> getDeltaTimes()
+        {
+            foreach (HitObject obj in objects)
+            {
+                HitObject prev = obj.Previous(1);
+                double prevTime = prev?.time ?? 0;
+                yield return obj.time - prevTime;
+            }
+        }
+        public double Difficulty()
+        {
+            double difficultyValue = 0;
+            List<double> deltaTimes = getDeltaTimes().Where(t => t != 0).ToList();
+            Console.WriteLine(deltaTimes.Count());
+            for (int i = 0; i < deltaTimes.Count; i++)
+                difficultyValue += (1 / deltaTimes[i]) / (i + 1);
+            return Math.Pow(difficultyValue * 800, 3);
         }
     }
 }

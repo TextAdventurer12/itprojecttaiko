@@ -13,6 +13,9 @@ namespace taikoclone
         public string DifficultyName;
         public string Filepath => $"{MapFolder}{Name}/{Name} [{DifficultyName}].osu";
         public string AudioFile => $"{MapFolder}{Name}/audio.mp3";
+        private double? difficulty;
+        public double Difficulty
+            => difficulty is null ? (difficulty = map.Difficulty()).Value : difficulty.Value;
         private Map mapData;
         public Map map
         {

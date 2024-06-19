@@ -55,7 +55,7 @@ namespace taikoclone
                     brush.Color = Color.Blue;
                 else
                     brush.Color = Color.Black;
-                e.Graphics.DrawString($"{library[i].Name} [{library[i].DifficultyName}]", drawFont, brush, new Point(75, 50 + i * 20));
+                e.Graphics.DrawString($"{library[i].Name} [{library[i].DifficultyName}] - {library[i].Difficulty:F1}*", drawFont, brush, new Point(25, 50 + i * 20));
             }
         }
 
@@ -73,7 +73,7 @@ namespace taikoclone
             Gameplay gameplay = new Gameplay(library[selectedIndex]);
             this.Hide();
             gameplay.ShowDialog();
-            this.Close();
+            this.Show();
         }
     }
 }

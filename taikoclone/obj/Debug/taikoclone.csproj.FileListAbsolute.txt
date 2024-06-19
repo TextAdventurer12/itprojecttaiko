@@ -42,3 +42,4 @@ K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\bin\Debug\NAudio.WinMM.xml
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\bin\Debug\System.Security.AccessControl.xml
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\bin\Debug\System.Security.Principal.Windows.xml
 K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.csproj.CopyComplete
+K:\12IT1\Assessment 2.8\taikoclone_git\taikoclone\obj\Debug\taikoclone.Results.resources

@@ -89,7 +89,8 @@ namespace taikoclone
         /// <summary>
         /// The current map being played
         /// </summary>
-        Map map;
+        MapInfo mapInfo;
+        Map map => mapInfo.map;
 
         public static Font UIFont = new Font("Arial", 25);
 
@@ -98,7 +99,7 @@ namespace taikoclone
         public Gameplay(MapInfo selectedMap)
         {
             InitializeComponent();
-            map = selectedMap.map;
+            mapInfo = selectedMap;
             keyboard = new Dictionary<Keys, bool>
             {
                 { Keys.D, false },
@@ -137,6 +138,15 @@ namespace taikoclone
 
         private void GameUpdate_Tick(object sender, EventArgs e)
         {
+            if (map.activeObjects.Count() == 0)
+            {
+                GameUpdate.Enabled = false;
+                Console.WriteLine($"{CurrentAccuracy()}%");
+                this.Hide();
+                Results resultScreen = new Results(judgements, mapInfo);
+                resultScreen.ShowDialog();
+                this.Close();
+            }
             currentTime = cumWatch.ElapsedMilliseconds - initial_delay;
             if (currentTime > offset - 25 && currentTime < offset + 25 && !(waveOutDevice.PlaybackState == PlaybackState.Playing))
                 waveOutDevice.Play();
@@ -156,6 +166,7 @@ namespace taikoclone
             e.Graphics.FillPie(brush, tapCircle, 90, 180);
             brush.Color = (keyboard[Keys.J] || keyboard[Keys.K]) ? Color.Blue : Color.DarkGray;
             e.Graphics.FillPie(brush, tapCircle, 270, 180);
+            brush.Color = Color.White;
             if (judgements.Count != 0)
             {
                 e.Graphics.FillEllipse(new SolidBrush(
@@ -164,7 +175,10 @@ namespace taikoclone
                     : Color.IndianRed)
                     , new Rectangle((int)playfieldStart - 17, tapCircleY + tapCircleRadius - 17, 34, 34));
             }
-            e.Graphics.DrawString((CurrentAccuracy() * 100).ToString("F2"), UIFont, brush, new Point(canvas.Width - 25 * 6, 12));
+            e.Graphics.DrawString($"{CurrentAccuracy() * 100:F2}%", UIFont, brush, new Point(canvas.Width - 25 * 6, 12));
+            double mapProgress = currentTime / map.EndTime;
+            Rectangle progressDisplay = new Rectangle(new Point(0, tapCircleY + 2 * tapCircleRadius + 12), new Size((int)(mapProgress * canvas.Width), 12));
+            e.Graphics.FillRectangle(brush, progressDisplay);
             map.DrawObjects(currentTime, e.Graphics);
         }
         private double CurrentAccuracy()
