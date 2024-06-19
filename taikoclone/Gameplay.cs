@@ -79,7 +79,7 @@ namespace taikoclone
         /// <summary>
         /// The Y Position of the input circle
         /// </summary>
-        public const int tapCircleY = 12;
+        public const int tapCircleY = 50;
 
         /// <summary>
         /// The clock rate of gameplay
@@ -90,6 +90,8 @@ namespace taikoclone
         /// The current map being played
         /// </summary>
         Map map;
+
+        public static Font UIFont = new Font("Arial", 25);
 
         IWavePlayer waveOutDevice;
         System.Diagnostics.Stopwatch cumWatch = new System.Diagnostics.Stopwatch();
@@ -147,13 +149,13 @@ namespace taikoclone
         private void canvas_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(Color.Black);
-            Rectangle rect = new Rectangle((int)playfieldStart - tapCircleRadius, tapCircleY, tapCircleRadius * 2, tapCircleRadius * 2);
+            Rectangle tapCircle = new Rectangle((int)playfieldStart - tapCircleRadius, tapCircleY, tapCircleRadius * 2, tapCircleRadius * 2);
             SolidBrush brush = new SolidBrush(Color.DarkGray);
             if (keyboard[Keys.F] || keyboard[Keys.D])
                 brush.Color = Color.Red;
-            e.Graphics.FillPie(brush, rect, 90, 180);
+            e.Graphics.FillPie(brush, tapCircle, 90, 180);
             brush.Color = (keyboard[Keys.J] || keyboard[Keys.K]) ? Color.Blue : Color.DarkGray;
-            e.Graphics.FillPie(brush, rect, 270, 180);
+            e.Graphics.FillPie(brush, tapCircle, 270, 180);
             if (judgements.Count != 0)
             {
                 e.Graphics.FillEllipse(new SolidBrush(
@@ -162,10 +164,13 @@ namespace taikoclone
                     : Color.IndianRed)
                     , new Rectangle((int)playfieldStart - 17, tapCircleY + tapCircleRadius - 17, 34, 34));
             }
+            e.Graphics.DrawString((CurrentAccuracy() * 100).ToString("F2"), UIFont, brush, new Point(canvas.Width - 25 * 6, 12));
             map.DrawObjects(currentTime, e.Graphics);
         }
         private double CurrentAccuracy()
         {
+            if (judgements.Count() == 0)
+                return 1;
             return judgements.Average(j => (int)j) / 300;
         }
     }
