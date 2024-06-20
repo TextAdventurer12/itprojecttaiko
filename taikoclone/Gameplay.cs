@@ -47,6 +47,7 @@ namespace taikoclone
         /// The initial value is an offset used to ensure audio is synced
         /// </summary>
         double currentTime = -initial_delay;
+        double previousTime;
 
         /// <summary>
         /// The judgements obtained throughout gameplay
@@ -91,6 +92,40 @@ namespace taikoclone
         /// </summary>
         MapInfo mapInfo;
         Map map => mapInfo.map;
+
+        /// <summary>
+        /// Key icons for tooltips
+        /// Images sourced from https://commons.wikimedia.org/wiki/Farm-Fresh_web_icons#Keys
+        /// </summary>
+        public static Dictionary<Keys, Image> keyThumbnails = new Dictionary<Keys, Image>()
+        {
+            { Keys.A, Image.FromFile("../../Keys/Farm-fresh_key_a.png") },
+            { Keys.B, Image.FromFile("../../Keys/Farm-fresh_key_b.png") },
+            { Keys.C, Image.FromFile("../../Keys/Farm-fresh_key_c.png") },
+            { Keys.D, Image.FromFile("../../Keys/Farm-fresh_key_d.png") },
+            { Keys.E, Image.FromFile("../../Keys/Farm-fresh_key_e.png") },
+            { Keys.F, Image.FromFile("../../Keys/Farm-fresh_key_f.png") },
+            { Keys.G, Image.FromFile("../../Keys/Farm-fresh_key_g.png") },
+            { Keys.H, Image.FromFile("../../Keys/Farm-fresh_key_h.png") },
+            { Keys.I, Image.FromFile("../../Keys/Farm-fresh_key_i.png") },
+            { Keys.J, Image.FromFile("../../Keys/Farm-fresh_key_j.png") },
+            { Keys.K, Image.FromFile("../../Keys/Farm-fresh_key_k.png") },
+            { Keys.L, Image.FromFile("../../Keys/Farm-fresh_key_l.png") },
+            { Keys.M, Image.FromFile("../../Keys/Farm-fresh_key_m.png") },
+            { Keys.N, Image.FromFile("../../Keys/Farm-fresh_key_n.png") },
+            { Keys.O, Image.FromFile("../../Keys/Farm-fresh_key_o.png") },
+            { Keys.P, Image.FromFile("../../Keys/Farm-fresh_key_p.png") },
+            { Keys.Q, Image.FromFile("../../Keys/Farm-fresh_key_q.png") },
+            { Keys.R, Image.FromFile("../../Keys/Farm-fresh_key_r.png") },
+            { Keys.S, Image.FromFile("../../Keys/Farm-fresh_key_s.png") },
+            { Keys.T, Image.FromFile("../../Keys/Farm-fresh_key_t.png") },
+            { Keys.U, Image.FromFile("../../Keys/Farm-fresh_key_u.png") },
+            { Keys.V, Image.FromFile("../../Keys/Farm-fresh_key_v.png") },
+            { Keys.W, Image.FromFile("../../Keys/Farm-fresh_key_w.png") },
+            { Keys.X, Image.FromFile("../../Keys/Farm-fresh_key_x.png") },
+            { Keys.Y, Image.FromFile("../../Keys/Farm-fresh_key_y.png") },
+            { Keys.Z, Image.FromFile("../../Keys/Farm-fresh_key_z.png") }
+        };
 
         public static Font UIFont = new Font("Arial", 25);
 
@@ -148,12 +183,13 @@ namespace taikoclone
                 this.Close();
             }
             currentTime = cumWatch.ElapsedMilliseconds - initial_delay;
-            if (currentTime > offset - 25 && currentTime < offset + 25 && !(waveOutDevice.PlaybackState == PlaybackState.Playing))
+            if (previousTime < offset && currentTime > offset && !(waveOutDevice.PlaybackState == PlaybackState.Playing))
                 waveOutDevice.Play();
             IEnumerable<Judgement> missedJudgements = map.CheckMissedObjects(currentTime);
             foreach (Judgement missedJudgement in missedJudgements)
                 judgements.Add(missedJudgement);
             canvas.Invalidate();
+            previousTime = currentTime;
         }
 
         private void canvas_Paint(object sender, PaintEventArgs e)
@@ -180,6 +216,14 @@ namespace taikoclone
             Rectangle progressDisplay = new Rectangle(new Point(0, tapCircleY + 2 * tapCircleRadius + 12), new Size((int)(mapProgress * canvas.Width), 12));
             e.Graphics.FillRectangle(brush, progressDisplay);
             map.DrawObjects(currentTime, e.Graphics);
+            Point k1Tooltip = new Point((int)playfieldStart - 72, tapCircleY + 2 * tapCircleRadius + 50);
+            Point k2Tooltip = new Point((int)playfieldStart - 40, tapCircleY + 2 * tapCircleRadius + 50);
+            Point k3Tooltip = new Point((int)playfieldStart + 40, tapCircleY + 2 * tapCircleRadius + 50);
+            Point k4Tooltip = new Point((int)playfieldStart + 72, tapCircleY + 2 * tapCircleRadius + 50);
+            e.Graphics.DrawImage(keyThumbnails[leftKeys[0]], k1Tooltip);
+            e.Graphics.DrawImage(keyThumbnails[leftKeys[1]], k2Tooltip);
+            e.Graphics.DrawImage(keyThumbnails[rightKeys[0]], k3Tooltip);
+            e.Graphics.DrawImage(keyThumbnails[rightKeys[1]], k4Tooltip);
         }
         private double CurrentAccuracy()
         {
