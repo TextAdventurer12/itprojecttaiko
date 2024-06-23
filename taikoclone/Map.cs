@@ -91,5 +91,10 @@ namespace taikoclone
                 difficultyValue += (1 / deltaTimes[i]) / (i + 1);
             return Math.Pow(difficultyValue * 800, 3);
         }
+        public void Restart()
+        {
+            foreach (var hitObj in objects)
+                hitObj.Active = true;
+        }
     }
 }

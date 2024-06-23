@@ -147,10 +147,16 @@ namespace taikoclone
             AudioFileReader audioFileReader = new AudioFileReader(selectedMap.AudioFile);
             waveOutDevice.Init(audioFileReader);
             cumWatch.Start();
+            map.Restart();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Escape)
+            {
+                GameUpdate.Enabled = false;
+                this.Close();
+            }
             if (keyboard.Keys.Contains(e.KeyCode))
                 keyboard[e.KeyCode] = true;
 
@@ -176,11 +182,10 @@ namespace taikoclone
             if (map.activeObjects.Count() == 0)
             {
                 GameUpdate.Enabled = false;
+                this.Close();
                 Console.WriteLine($"{CurrentAccuracy()}%");
-                this.Hide();
                 Results resultScreen = new Results(judgements, mapInfo);
                 resultScreen.ShowDialog();
-                this.Close();
             }
             currentTime = cumWatch.ElapsedMilliseconds - initial_delay;
             if (previousTime < offset && currentTime > offset && !(waveOutDevice.PlaybackState == PlaybackState.Playing))
@@ -230,6 +235,12 @@ namespace taikoclone
             if (judgements.Count() == 0)
                 return 1;
             return judgements.Average(j => (int)j) / 300;
+        }
+
+        private void Gameplay_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            GameUpdate.Enabled = false;
+            waveOutDevice.Stop();
         }
     }
     public enum Judgement

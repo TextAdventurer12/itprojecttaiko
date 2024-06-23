@@ -49,14 +49,15 @@
             this.GameUpdate.Interval = 1;
             this.GameUpdate.Tick += new System.EventHandler(this.GameUpdate_Tick);
             // 
-            // Form1
+            // Gameplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.canvas);
-            this.Name = "Form1";
+            this.Name = "Gameplay";
             this.Text = "Form1";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Gameplay_FormClosed);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();

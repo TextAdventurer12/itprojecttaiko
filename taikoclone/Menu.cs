@@ -35,7 +35,7 @@ namespace taikoclone
                     string[] halves = map.Split('[');
                     string name = halves[0].RemoveEndingWhitespace();
                     string difficultyName = halves[1].Split('.')[0].Replace("]", "").RemoveEndingWhitespace();
-                    yield return new MapInfo(name, difficultyName);
+                    yield return new MapInfo(name, difficultyName, set);
                 }
             }
         }
