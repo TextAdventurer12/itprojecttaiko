@@ -103,6 +103,7 @@
     <Compile Include="HitObject.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MapDownloader.cs" />
+    <Compile Include="MapFrame.cs" />
     <Compile Include="MapInfo.cs" />
     <Compile Include="MapParser.cs" />
     <Compile Include="Menu.cs">

@@ -86,7 +86,7 @@ namespace taikoclone
         {
             double difficultyValue = 0;
             List<double> deltaTimes = getDeltaTimes().Where(t => t != 0).ToList();
-            Console.WriteLine(deltaTimes.Count());
+            deltaTimes.Sort();
             for (int i = 0; i < deltaTimes.Count; i++)
                 difficultyValue += (1 / deltaTimes[i]) / (i + 1);
             return Math.Pow(difficultyValue * 800, 3);

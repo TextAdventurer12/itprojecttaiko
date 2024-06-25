@@ -182,10 +182,11 @@ namespace taikoclone
             if (map.activeObjects.Count() == 0)
             {
                 GameUpdate.Enabled = false;
-                this.Close();
+                this.Hide();
                 Console.WriteLine($"{CurrentAccuracy()}%");
                 Results resultScreen = new Results(judgements, mapInfo);
                 resultScreen.ShowDialog();
+                this.Close();
             }
             currentTime = cumWatch.ElapsedMilliseconds - initial_delay;
             if (previousTime < offset && currentTime > offset && !(waveOutDevice.PlaybackState == PlaybackState.Playing))
