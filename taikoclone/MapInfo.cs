@@ -16,24 +16,35 @@ namespace taikoclone
         public string DifficultyName;
         public string Filepath => $"{FileLocation}{Name} [{DifficultyName}].osu";
         private string FileLocation => $"{MapFolder}{Name}/";
-        public string AudioFile => $"{MapFolder}{Name}/audio.mp3";
+        private string audioFile;
+        public string AudioFile => audioFile ?? InitialiseAudio();
         private double? difficulty;
         public double Difficulty
             => difficulty is null ? (difficulty = map.Difficulty()).Value : difficulty.Value;
         private Map mapData;
         private Image background;
         public Image Background
-            => background?? InitialiseBackgruond();
+            => background?? InitialiseBackground();
         public Map map
-        {
-            get => mapData?? InitialiseMapData();
-        }
+            => mapData?? InitialiseMapData();
         private Map InitialiseMapData()
         {
             mapData = MapParser.FromFile(Filepath);
             return mapData;
         }
-        private Image InitialiseBackgruond()
+        private string InitialiseAudio()
+        {
+            foreach (string filePath in Directory.GetFiles($"{MapFolder}{Name}"))
+            {
+                string file = Path.GetFileName(filePath);
+                if (file.Contains(".mp3"))
+                {
+                    return filePath;
+                }
+            }
+            return null;
+        }
+        private Image InitialiseBackground()
         {
             foreach (string filePath in Directory.GetFiles($"{MapFolder}{Name}"))
             {

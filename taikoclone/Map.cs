@@ -27,7 +27,7 @@ namespace taikoclone
             Preempt = preempt;
             HitWindowGreat = hitWindowGreat;
             HitWindowOk = hitWindowOk;
-            this.objects = objects;
+            this.objects = objects.OrderBy(obj => obj.time).ToList();
             foreach (var hitObject in objects)
                 hitObject.map = this;
         }
@@ -79,17 +79,29 @@ namespace taikoclone
             {
                 HitObject prev = obj.Previous(1);
                 double prevTime = prev?.time ?? 0;
-                yield return obj.time - prevTime;
+                yield return Math.Max(25, obj.time - prevTime);
             }
         }
+        private const double DecayWeight = 0.95;
         public double Difficulty()
         {
             double difficultyValue = 0;
-            List<double> deltaTimes = getDeltaTimes().Where(t => t != 0).ToList();
-            deltaTimes.Sort();
-            for (int i = 0; i < deltaTimes.Count; i++)
-                difficultyValue += (1 / deltaTimes[i]) / (i + 1);
-            return Math.Pow(difficultyValue * 800, 3);
+            List<double> deltaTimes = getDeltaTimes().OrderBy(t => t).ToList();
+            List<double> strains = new List<double>();
+            double strain = 0;
+            foreach (double time in deltaTimes)
+            {
+                strain *= Math.Pow(0.4, time / 1000);
+                strain += 1 / time;
+                strains.Add(strain);
+            }
+            double weight = 1;
+            foreach (var difficulty in strains.OrderByDescending(t => t))
+            {
+                difficultyValue += weight * difficulty;
+                weight *= DecayWeight;
+            }
+            return Math.Log(difficultyValue + 10);
         }
         public void Restart()
         {

@@ -30,12 +30,13 @@ namespace taikoclone
         public double drawTimeEnd
             => time + map.HitWindowMiss;
 
-        public HitObject(double time, ObjectType type)
+        public HitObject(double time, ObjectType type, int index)
         {
             this.time = time;
             this.type = type;
             colour = new SolidBrush(Color.White);
             colour.Color = type == ObjectType.LEFT ? Color.Red : Color.Blue;
+            this.Index = index;
         }
         public double xPosition(double currentTime)
         {

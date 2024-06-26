@@ -20,10 +20,11 @@ namespace taikoclone
             if (!sections.Keys.Contains("HitObjects"))
                 throw new ArgumentException("Could not find hit objects section");
             List<string> objectData = sections["HitObjects"];
-            foreach (string data in objectData)
+            for (int i = 0; i < objectData.Count; i++)
             {
+                string data = objectData[i];
                 string[] fields = data.Split(',');
-                yield return new HitObject(double.Parse(fields[2]), fields[4] == "0" ? ObjectType.LEFT : ObjectType.RIGHT);
+                yield return new HitObject(double.Parse(fields[2]), fields[4] == "0" ? ObjectType.LEFT : ObjectType.RIGHT, i);
             }
         }
         private static Dictionary<string, List<string>> ReadFile(StreamReader stream)

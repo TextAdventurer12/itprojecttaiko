@@ -144,6 +144,7 @@ namespace taikoclone
             };
             canvas.SendToBack();
             waveOutDevice = new WaveOut();
+            Console.WriteLine(selectedMap.AudioFile);
             AudioFileReader audioFileReader = new AudioFileReader(selectedMap.AudioFile);
             waveOutDevice.Init(audioFileReader);
             cumWatch.Start();
