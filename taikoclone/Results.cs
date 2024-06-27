@@ -14,20 +14,14 @@ namespace taikoclone
     {
         MapInfo map;
         Dictionary<Judgement, int> judgementCounts;
+        public ScoreInfo score;
         static Font font = new Font("Arial", 30);
         static SolidBrush brush = new SolidBrush(Color.Black);
-        public Results(List<Judgement> judgements, MapInfo map)
+        public Results(List<Judgement> judgements, List<int> comboes, MapInfo map)
         {
             InitializeComponent();
             canvas.Invalidate();
-            judgementCounts = new Dictionary<Judgement, int>()
-            {
-                { Judgement.Great, 0},
-                { Judgement.Ok, 0},
-                { Judgement.Miss, 0},
-            };
-            foreach (Judgement judgement in judgements)
-                judgementCounts[judgement]++;
+            this.score = new ScoreInfo(judgements, comboes);
             this.map = map;
         }
 
@@ -46,6 +40,23 @@ namespace taikoclone
         {
             if (e.KeyCode == Keys.Escape)
                 this.Close();
+        }
+    }
+    public struct ScoreInfo
+    {
+        Dictionary<Judgement, int> judgementCounts;
+        List<int> comboes;
+        public ScoreInfo(List<Judgement> judgements, List<int> comboes)
+        {
+            this.comboes = new List<int>(comboes);
+            judgementCounts = new Dictionary<Judgement, int>()
+            {
+                { Judgement.Great, 0},
+                { Judgement.Ok, 0},
+                { Judgement.Miss, 0},
+            };
+            foreach (Judgement judgement in judgements)
+                judgementCounts[judgement]++;
         }
     }
 }

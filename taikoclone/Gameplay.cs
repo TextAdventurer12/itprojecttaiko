@@ -83,15 +83,12 @@ namespace taikoclone
         public const int tapCircleY = 50;
 
         /// <summary>
-        /// The clock rate of gameplay
-        /// </summary>
-        double clockRate = 1;
-
-        /// <summary>
         /// The current map being played
         /// </summary>
         MapInfo mapInfo;
         Map map => mapInfo.map;
+
+        int combo = 0;
 
         /// <summary>
         /// Key icons for tooltips
@@ -166,9 +163,9 @@ namespace taikoclone
             {
                 judgements.Add(outcome.judgement.Value);
                 hitTimes.Add(outcome.error);
-                //Console.WriteLine($"{CurrentAccuracy() * 100:F2}");
-                Console.WriteLine($"Real: {cumWatch.ElapsedMilliseconds}. Expected: {currentTime / clockRate}");
-                Console.WriteLine($"Error: {outcome.error}, Current Mean Error: {hitTimes.Average()}");
+                combo++;
+                if (outcome.judgement.Value == Judgement.Miss)
+                    combo = 0;
             }
         }
 
@@ -185,7 +182,7 @@ namespace taikoclone
                 GameUpdate.Enabled = false;
                 this.Hide();
                 Console.WriteLine($"{CurrentAccuracy()}%");
-                Results resultScreen = new Results(judgements, mapInfo);
+                Results resultScreen = new Results(judgements, new List<int>(), mapInfo);
                 resultScreen.ShowDialog();
                 this.Close();
             }
@@ -225,12 +222,20 @@ namespace taikoclone
             map.DrawObjects(currentTime, e.Graphics);
             Point k1Tooltip = new Point((int)playfieldStart - 72, tapCircleY + 2 * tapCircleRadius + 50);
             Point k2Tooltip = new Point((int)playfieldStart - 40, tapCircleY + 2 * tapCircleRadius + 50);
+            Rectangle leftPressIndicator = new Rectangle((int)playfieldStart - 72, tapCircleY + 2 * tapCircleRadius + 40, 64, 5);
             Point k3Tooltip = new Point((int)playfieldStart + 40, tapCircleY + 2 * tapCircleRadius + 50);
             Point k4Tooltip = new Point((int)playfieldStart + 72, tapCircleY + 2 * tapCircleRadius + 50);
+            Rectangle rightPressIndicator = new Rectangle((int)playfieldStart + 40, tapCircleY + 2 * tapCircleRadius + 40, 64, 5);
             e.Graphics.DrawImage(keyThumbnails[leftKeys[0]], k1Tooltip);
             e.Graphics.DrawImage(keyThumbnails[leftKeys[1]], k2Tooltip);
             e.Graphics.DrawImage(keyThumbnails[rightKeys[0]], k3Tooltip);
             e.Graphics.DrawImage(keyThumbnails[rightKeys[1]], k4Tooltip);
+            brush.Color = Color.Red;
+            e.Graphics.FillRectangle(brush, leftPressIndicator);
+            brush.Color = Color.Blue;
+            e.Graphics.FillRectangle(brush, rightPressIndicator);
+            brush.Color = Color.White;
+            e.Graphics.DrawString($"{combo}x", UIFont, brush, new Point(5, canvas.Height - 50));
         }
         private double CurrentAccuracy()
         {
