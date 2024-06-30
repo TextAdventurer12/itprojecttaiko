@@ -59,6 +59,8 @@ namespace taikoclone
         }
         public void CleanBackground()
         {
+            if (!(background is null))
+                background.Dispose();
             background = null;
         }
         public MapInfo(string name, string difficultyName)

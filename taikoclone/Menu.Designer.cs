@@ -47,6 +47,7 @@
             this.canvas.TabIndex = 0;
             this.canvas.TabStop = false;
             this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
+            this.canvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Menu_MouseClick);
             // 
             // Menu
             // 
@@ -58,6 +59,7 @@
             this.Name = "Menu";
             this.Text = "Menu";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Menu_KeyDown);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Menu_MouseClick);
             ((System.ComponentModel.ISupportInitialize)(this.canvas)).EndInit();
             this.ResumeLayout(false);
 

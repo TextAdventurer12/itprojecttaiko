@@ -56,7 +56,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.canvas);
             this.Name = "Gameplay";
-            this.Text = "Form1";
+            this.Text = "Gameplay";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Gameplay_FormClosed);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);

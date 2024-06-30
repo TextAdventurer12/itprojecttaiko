@@ -19,11 +19,7 @@ namespace taikoclone
         /// The X Position of the left side of the playfield
         /// </summary>
         public const double playfieldStart = 80;
-
-        /// <summary>
-        /// The X position of the right side of the playfield
-        /// </summary>
-        public const double playfieldEnd = 700;
+        public double playfieldEnd => canvas.Width - 25;
 
         /// <summary>
         /// Whether the keys contained are pressed
@@ -146,6 +142,7 @@ namespace taikoclone
             waveOutDevice.Init(audioFileReader);
             cumWatch.Start();
             map.Restart();
+            canvas.Dock = DockStyle.Fill;
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -219,7 +216,7 @@ namespace taikoclone
             double mapProgress = currentTime / map.EndTime;
             Rectangle progressDisplay = new Rectangle(new Point(0, tapCircleY + 2 * tapCircleRadius + 12), new Size((int)(mapProgress * canvas.Width), 12));
             e.Graphics.FillRectangle(brush, progressDisplay);
-            map.DrawObjects(currentTime, e.Graphics);
+            map.DrawObjects(currentTime, e.Graphics, playfieldEnd);
             Point k1Tooltip = new Point((int)playfieldStart - 72, tapCircleY + 2 * tapCircleRadius + 50);
             Point k2Tooltip = new Point((int)playfieldStart - 40, tapCircleY + 2 * tapCircleRadius + 50);
             Rectangle leftPressIndicator = new Rectangle((int)playfieldStart - 72, tapCircleY + 2 * tapCircleRadius + 40, 64, 5);

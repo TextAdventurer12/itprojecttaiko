@@ -49,13 +49,13 @@ namespace taikoclone
                 return (Judgement.Ok, timeToNextObject);
             return (Judgement.Great, timeToNextObject);
         }
-        public void DrawObjects(double time, Graphics target)
+        public void DrawObjects(double time, Graphics target, double playfieldEnd)
         {
             var drawableObjects = objects.Where(obj => obj.shouldDraw(time)).ToList();
             if (drawableObjects.Count() == 0)
                 return;
             foreach (var obj in drawableObjects)
-                obj.Draw(time, target);
+                obj.Draw(time, target, playfieldEnd);
         }
         public HitObject NextObject(double time)
         {
@@ -101,7 +101,7 @@ namespace taikoclone
                 difficultyValue += weight * difficulty;
                 weight *= DecayWeight;
             }
-            return Math.Log(difficultyValue + 10);
+            return Math.Pow(Math.Log(difficultyValue + 10) / 1.5, 3);
         }
         public void Restart()
         {

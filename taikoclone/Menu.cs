@@ -18,6 +18,9 @@ namespace taikoclone
         private List<MapFrame> frames = new List<MapFrame>();
         private int selectedIndex = 0;
         private SolidBrush backgroundTint;
+        private SolidBrush buttonColour;
+        private SolidBrush textColour;
+        private Rectangle goButton;
         private ulong tickIndex = 0;
         public Menu()
         {
@@ -26,6 +29,10 @@ namespace taikoclone
             foreach (var map in library)
                 frames.Add(new MapFrame(map));
             backgroundTint = new SolidBrush(Color.FromArgb(64, 0, 0, 0));
+            buttonColour = new SolidBrush(Color.FromArgb(200, 0, 0, 32));
+            textColour = new SolidBrush(Color.White);
+            goButton = new Rectangle(25, canvas.Height - 60, 150, 50);
+            canvas.Dock = DockStyle.Fill;
         }
         private IEnumerable<MapInfo> loadLibrary()
         {
@@ -57,7 +64,7 @@ namespace taikoclone
 
         private void canvas_Paint(object sender, PaintEventArgs e)
         {
-            Font drawFont = new Font("Arial", 16);
+            Font drawFont = new Font("Arial", 31);
             e.Graphics.Clear(Color.White);
             Image bgImage = library[selectedIndex].Background;
             if (!(bgImage is null))
@@ -74,13 +81,20 @@ namespace taikoclone
                 else
                     frames[i].Draw(e.Graphics, location);
             }
+            goButton = new Rectangle(25, canvas.Height - 60, 150, 50);
+            e.Graphics.FillRectangle(buttonColour, goButton);
+            e.Graphics.DrawString("Go!", drawFont, textColour, goButton.Location);
+            Rectangle upThumbnail = new Rectangle(canvas.Width - 20, canvas.Height - 45, 20, 20);
+            Rectangle downThumbnail = new Rectangle(canvas.Width - 20, canvas.Height - 20, 20, 20);
+            e.Graphics.DrawImage(Gameplay.keyThumbnails[Keys.W], upThumbnail);
+            e.Graphics.DrawImage(Gameplay.keyThumbnails[Keys.S], downThumbnail);
         }
 
         private void Menu_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Down)
+            if (e.KeyCode == Keys.Down || e.KeyCode == Keys.S)
                 selectedIndex++;
-            if (e.KeyCode == Keys.Up)
+            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.W)
                 selectedIndex--;
             if (selectedIndex < 0)
                 selectedIndex = library.Count - 1;
@@ -91,6 +105,17 @@ namespace taikoclone
             this.Hide();
             gameplay.ShowDialog();
             this.Show();
+        }
+
+        private void Menu_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (goButton.Contains(e.Location))
+            {
+                Gameplay gameplay = new Gameplay(library[selectedIndex]);
+                this.Hide();
+                gameplay.ShowDialog();
+                this.Show();
+            }
         }
     }
 }

@@ -38,19 +38,19 @@ namespace taikoclone
             colour.Color = type == ObjectType.LEFT ? Color.Red : Color.Blue;
             this.Index = index;
         }
-        public double xPosition(double currentTime)
+        public double xPosition(double currentTime, double playfieldEnd)
         {
             // proportion of duration remaining
             double dR = (currentTime - drawTimeStart) / (time - drawTimeStart);
             // linearly interpolate between the start of the playfield and the end
-            return dR * Gameplay.playfieldStart + (1 - dR) * Gameplay.playfieldEnd;
+            return dR * Gameplay.playfieldStart + (1 - dR) * playfieldEnd;
         }
-        public void Draw(double currentTime, Graphics target)
+        public void Draw(double currentTime, Graphics target, double playfieldEnd)
         {
             if (!shouldDraw(currentTime))
                 return;
             double remainingTime = time - currentTime;
-            int x = (int)xPosition(currentTime);
+            int x = (int)xPosition(currentTime, playfieldEnd);
             Rectangle drawBox = new Rectangle(x, Gameplay.tapCircleY + Gameplay.tapCircleRadius - radius, radius * 2, radius * 2);
             if (remainingTime < map.HitWindowMiss)
                 target.DrawEllipse(whitePen, drawBox);
