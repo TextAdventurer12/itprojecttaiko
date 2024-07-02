@@ -17,7 +17,7 @@ namespace taikoclone
         /// </summary>
         public double time;
 
-        private int radius = 25;
+        private int radius = Gameplay.tapCircleRadius / 2;
         private SolidBrush colour;
         private Pen whitePen = new Pen(new SolidBrush(Color.White));
         public ObjectType type;
@@ -51,7 +51,7 @@ namespace taikoclone
                 return;
             double remainingTime = time - currentTime;
             int x = (int)xPosition(currentTime, playfieldEnd);
-            Rectangle drawBox = new Rectangle(x, Gameplay.tapCircleY + Gameplay.tapCircleRadius - radius, radius * 2, radius * 2);
+            Rectangle drawBox = new Rectangle(x, Gameplay.tapCircleY - radius, radius * 2, radius * 2);
             if (remainingTime < map.HitWindowMiss)
                 target.DrawEllipse(whitePen, drawBox);
             target.FillEllipse(colour, drawBox);

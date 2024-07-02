@@ -18,6 +18,7 @@ namespace taikoclone
         public double HitWindowOk { get; private set; }
         public double HitWindowMiss => HitWindowGreat + HitWindowOk;
         public readonly List<HitObject> objects;
+        public int MaxCombo => objects.Count();
         public List<HitObject> activeObjects
             => objects.Where(obj => obj.Active).ToList();
 

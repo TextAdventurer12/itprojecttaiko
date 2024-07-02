@@ -24,6 +24,8 @@ namespace taikoclone
         private ulong tickIndex = 0;
         public Menu()
         {
+            FormBorderStyle = FormBorderStyle.None;
+            WindowState = FormWindowState.Maximized;
             InitializeComponent();
             library = loadLibrary().OrderBy(x => x.Difficulty).ToList();
             foreach (var map in library)
@@ -92,6 +94,11 @@ namespace taikoclone
 
         private void Menu_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Escape)
+            {
+                tick.Enabled = false;
+                this.Close();
+            }
             if (e.KeyCode == Keys.Down || e.KeyCode == Keys.S)
                 selectedIndex++;
             if (e.KeyCode == Keys.Up || e.KeyCode == Keys.W)
