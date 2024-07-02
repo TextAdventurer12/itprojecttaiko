@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NAudio.Wave.SampleProviders;
 
 namespace taikoclone
 {
@@ -45,8 +46,12 @@ namespace taikoclone
     public struct ScoreInfo
     {
         Dictionary<Judgement, int> judgementCounts;
-        List<int> comboes;
-        public int MaxCombo => comboes.Max();
+        List<int>? comboes;
+        private int? maxCombo;
+        private int InitialiseCombo()
+            => (maxCombo = comboes.Max());
+        public int MaxCombo
+            => maxCombo?? InitialiseCombo();
         public int CountGreat => judgementCounts[Judgement.Great];
         public int CountOk => judgementCounts[Judgement.Ok];
         public int CountMiss => judgementCounts[Judgement.Miss];
@@ -66,6 +71,34 @@ namespace taikoclone
                 judgementCounts[judgement]++;
             this.map = map;
         }
-        public double Score => 1000000 * Accuracy * (comboes.Sum(c => Math.Pow(c, 2)) / Math.Pow(map.map.MaxCombo, 2));
+        public ScoreInfo(string Csv)
+        {
+            string[] entries = Csv.Split(",");
+            if (entries.Count() == 0)
+                throw new ArgumentNullException("Found no entries for csv");
+            this.Score = double.Parse(entries[0]);
+            this.MaxCombo = int.Parse(entries[1]);
+            this.judgementCounts = new Dictionary<Judgement, int>()
+            {
+                Judgement.Great, int.Parse(entries[2]),
+                Judgement.Ok, int.Parse(entries[3]),
+                Judgement.Miss, int.Parse(entries[4])
+            };
+        }
+        private double? score;
+        public double Score
+        {
+            get => score?? CalculateScore();
+            set => score = value;
+        }
+        private double CalculateScore()
+        {
+            if (map is null)
+                throw new ArgumentNullException("Attempted to calculate score on null map");
+            score = 1000000 * Accuracy * (comboes.Sum(c => Math.Pow(c, 2)) / Math.Pow(map.map.MaxCombo, 2));
+            return score;
+        }
+        public string ToCsv()
+            => $"{Score}, {MaxCombo}, {CountGreat}, {CountOk}, {CountMiss}";
     }
 }
