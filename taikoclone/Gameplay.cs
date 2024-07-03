@@ -127,11 +127,13 @@ namespace taikoclone
 
         IWavePlayer waveOutDevice;
         System.Diagnostics.Stopwatch cumWatch = new System.Diagnostics.Stopwatch();
-        public Gameplay(MapInfo selectedMap)
+        private Leaderboard mapLB;
+        public Gameplay(MapInfo selectedMap, Leaderboard mapLB)
         {
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
             InitializeComponent();
+            this.mapLB = mapLB;
             mapInfo = selectedMap;
             keyboard = new Dictionary<Keys, bool>
             {
@@ -192,7 +194,7 @@ namespace taikoclone
                 comboes.Add(combo);
                 this.Hide();
                 Console.WriteLine($"{CurrentAccuracy()}%");
-                Results resultScreen = new Results(judgements, comboes, mapInfo);
+                Results resultScreen = new Results(judgements, comboes, mapInfo, mapLB);
                 resultScreen.ShowDialog();
                 this.Close();
             }

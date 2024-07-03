@@ -15,6 +15,7 @@ namespace taikoclone
     public partial class Menu : Form
     {
         public List<MapInfo> library;
+        public List<Leaderboard> leaderboards;
         private List<MapFrame> frames = new List<MapFrame>();
         private int selectedIndex = 0;
         private SolidBrush backgroundTint;
@@ -28,8 +29,25 @@ namespace taikoclone
             WindowState = FormWindowState.Maximized;
             InitializeComponent();
             library = loadLibrary().OrderBy(x => x.Difficulty).ToList();
+            leaderboards = new List<Leaderboard>();
+            string lbFolder = "../../Leaderboards";
             foreach (var map in library)
+            {
                 frames.Add(new MapFrame(map));
+                StreamReader source;
+                try
+                {
+                    source = new StreamReader($"{lbFolder}/{map.Name} [{map.DifficultyName}]");
+                }
+                catch
+                {
+                    StreamWriter lb = new StreamWriter(File.Create($"{lbFolder}/{map.Name} [{map.DifficultyName}]"));
+                    leaderboards.Add(new Leaderboard($"{map.Name} [{map.DifficultyName}]"));
+                    lb.WriteLine($"{map.Name} [{map.DifficultyName}]");
+                    continue;
+                }
+                leaderboards.Add(new Leaderboard(source));
+            }
             backgroundTint = new SolidBrush(Color.FromArgb(64, 0, 0, 0));
             buttonColour = new SolidBrush(Color.FromArgb(200, 0, 0, 32));
             textColour = new SolidBrush(Color.White);
@@ -90,6 +108,7 @@ namespace taikoclone
             Rectangle downThumbnail = new Rectangle(canvas.Width - 20, canvas.Height - 20, 20, 20);
             e.Graphics.DrawImage(Gameplay.keyThumbnails[Keys.W], upThumbnail);
             e.Graphics.DrawImage(Gameplay.keyThumbnails[Keys.S], downThumbnail);
+            leaderboards[selectedIndex].Draw(e.Graphics, canvas);
         }
 
         private void Menu_KeyDown(object sender, KeyEventArgs e)
@@ -108,17 +127,19 @@ namespace taikoclone
             selectedIndex %= library.Count;
             if (e.KeyCode != Keys.Enter)
                 return;
-            Gameplay gameplay = new Gameplay(library[selectedIndex]);
+            Gameplay gameplay = new Gameplay(library[selectedIndex], leaderboards[selectedIndex]);
             this.Hide();
             gameplay.ShowDialog();
-            this.Show();
+            this.Show(); 
+            StreamWriter lb = new StreamWriter(File.Create($"../../Leaderboards/{library[selectedIndex].Name} [{library[selectedIndex].DifficultyName}]"));
+            leaderboards[selectedIndex].SaveToFile(lb);
         }
 
         private void Menu_MouseClick(object sender, MouseEventArgs e)
         {
             if (goButton.Contains(e.Location))
             {
-                Gameplay gameplay = new Gameplay(library[selectedIndex]);
+                Gameplay gameplay = new Gameplay(library[selectedIndex], leaderboards[selectedIndex]);
                 this.Hide();
                 gameplay.ShowDialog();
                 this.Show();

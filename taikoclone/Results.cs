@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using NAudio.Wave.SampleProviders;
 
 namespace taikoclone
 {
@@ -17,7 +16,7 @@ namespace taikoclone
         public ScoreInfo score;
         static Font font = new Font("Arial", 30);
         static SolidBrush brush = new SolidBrush(Color.Black);
-        public Results(List<Judgement> judgements, List<int> comboes, MapInfo map)
+        public Results(List<Judgement> judgements, List<int> comboes, MapInfo map, Leaderboard targetBoard)
         {
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
@@ -25,6 +24,10 @@ namespace taikoclone
             canvas.Invalidate();
             this.score = new ScoreInfo(judgements, comboes, map);
             this.map = map;
+            Popup nameGetter = new Popup();
+            nameGetter.ShowDialog();
+            string name = nameGetter.field;
+            targetBoard.scores.Add(new LeaderboardScore(this.score, name));
         }
 
         private void canvas_Paint(object sender, PaintEventArgs e)
@@ -43,13 +46,13 @@ namespace taikoclone
                 this.Close();
         }
     }
-    public struct ScoreInfo
+    public class ScoreInfo
     {
         Dictionary<Judgement, int> judgementCounts;
-        List<int>? comboes;
-        private int? maxCombo;
+        List<int> comboes;
+        private int? maxCombo = null;
         private int InitialiseCombo()
-            => (maxCombo = comboes.Max());
+            => (maxCombo = comboes.Max()).Value;
         public int MaxCombo
             => maxCombo?? InitialiseCombo();
         public int CountGreat => judgementCounts[Judgement.Great];
@@ -73,19 +76,19 @@ namespace taikoclone
         }
         public ScoreInfo(string Csv)
         {
-            string[] entries = Csv.Split(",");
+            string[] entries = Csv.Split(',');
             if (entries.Count() == 0)
                 throw new ArgumentNullException("Found no entries for csv");
-            this.Score = double.Parse(entries[0]);
-            this.MaxCombo = int.Parse(entries[1]);
+            score = double.Parse(entries[0]);
+            maxCombo = int.Parse(entries[1]);
             this.judgementCounts = new Dictionary<Judgement, int>()
             {
-                Judgement.Great, int.Parse(entries[2]),
-                Judgement.Ok, int.Parse(entries[3]),
-                Judgement.Miss, int.Parse(entries[4])
+                {Judgement.Great, int.Parse(entries[2]) },
+                {Judgement.Ok, int.Parse(entries[3])   },
+                { Judgement.Miss, int.Parse(entries[4]) }
             };
         }
-        private double? score;
+        private double? score = null;
         public double Score
         {
             get => score?? CalculateScore();
@@ -96,7 +99,7 @@ namespace taikoclone
             if (map is null)
                 throw new ArgumentNullException("Attempted to calculate score on null map");
             score = 1000000 * Accuracy * (comboes.Sum(c => Math.Pow(c, 2)) / Math.Pow(map.map.MaxCombo, 2));
-            return score;
+            return score.Value;
         }
         public string ToCsv()
             => $"{Score}, {MaxCombo}, {CountGreat}, {CountOk}, {CountMiss}";
