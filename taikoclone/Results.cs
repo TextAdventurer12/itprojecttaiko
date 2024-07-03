@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NAudio.SoundFont;
 
 namespace taikoclone
 {
@@ -14,8 +15,11 @@ namespace taikoclone
     {
         MapInfo map;
         public ScoreInfo score;
-        static Font font = new Font("Arial", 30);
-        static SolidBrush brush = new SolidBrush(Color.Black);
+        static SolidBrush backgroundTint = new SolidBrush(Color.FromArgb(200, 0, 0, 32));
+        static SolidBrush textColor = new SolidBrush(textColor.White);
+        static Font bigFont = new Font("Arial", 64);
+        static Font medFont = new Font("Arial", 32);
+        static Font smallFont = new Font("Arial", 24);
         public Results(List<Judgement> judgements, List<int> comboes, MapInfo map, Leaderboard targetBoard)
         {
             FormBorderStyle = FormBorderStyle.None;
@@ -32,13 +36,37 @@ namespace taikoclone
 
         private void canvas_Paint(object sender, PaintEventArgs e)
         {
-            e.Graphics.DrawString($"{map.Name} [{map.DifficultyName}]", font, brush, new Point(25, 25));
-            e.Graphics.DrawString($"Great: {score.CountGreat}", font, brush, new Point(25, 75));
-            e.Graphics.DrawString($"Ok: {score.CountOk}", font, brush, new Point(25, 125));
-            e.Graphics.DrawString($"Miss: {score.CountMiss}", font, brush, new Point(25, 175));
-            e.Graphics.DrawString($"{score.Accuracy * 100:F2}%", font, brush, new Point(25, 225));
-            e.Graphics.DrawString($"Max Combo: {score.MaxCombo}", font, brush, new Point(25, 275));
-            e.Graphics.DrawString($"Score: {score.Score:F0}", font, brush, new Point(25, 325));
+            e.Graphics.Clear(Color.White);
+            Image bgImage = map.Background;
+            if (!(bgImage is null))
+                e.Graphics.DrawImage(map.Background, new Rectangle(0, 0, canvas.Width, canvas.Height));
+            Rectangle mapTitle = new Rectangle(16, 16, 512, 64);
+            Rectangle diffTitle = new Rectangle(16, 96, 256, 32);
+            e.Graphics.FillRectangle(mapTitle, backgroundTint);
+            e.Graphics.DrawString(map.Name, bigFont, textColor, mapTitle);
+            e.Graphics.FillRectangle(diffTitle, backgroundTint);
+            e.Graphics.DrawString(map.Difficulty, medFont, textColor, diffTitle);
+
+            Rectangle judgementBox = new Rectangle(32, 144, 780, canvas.Height - 144 - 32);
+            e.Graphics.FillRectangle(judgementBox, backgroundTint);
+
+            Rectangle greatBox = new Rectangle(32, 200, 256, 52);
+            e.Graphics.FillRectangle(greatBox, backgroundTint);
+            e.Graphics.DrawString($"Great: {score.CountGreat}", smallFont, textColor);
+            Rectangle okBox = new Rectangle(320, 200, 256, 52);
+            e.Graphics.FillRectangle(greatBox, backgroundTint);
+            e.Graphics.DrawString($"OK: {score.CountOk}", smallFont, textColor);
+            Rectangle missBox = new Rectangle(32, 264, 256, 52);
+            e.Graphics.FillRectangle(greatBox, backgroundTint);
+            e.Graphics.DrawString($"Miss: {score.CountMiss}", smallFont, textColor);
+            Rectangle comboBox = new Rectangle(32, 328, 256, 64);
+            e.Graphics.FillRectangle(greatBox, backgroundTint);
+            e.Graphics.DrawString($"{score.MaxCombo}x", medFont, textColor);
+
+            Rectangle scoreBox = new Rectangle(32, 392, 256, 128);
+            e.Graphics.FillRectangle(greatBox, backgroundTint);
+            e.Graphics.DrawString($"{score.Score:F0}x", bigFont, textColor);
+            
         }
         private void Results_KeyDown(object sender, KeyEventArgs e)
         {

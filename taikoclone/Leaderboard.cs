@@ -31,7 +31,6 @@ namespace taikoclone
         }
         public Leaderboard(string Header)
         {
-            Console.WriteLine("erm");
             this.Header = Header;
             this.scores = new List<LeaderboardScore>();
         }
@@ -43,7 +42,7 @@ namespace taikoclone
             for (int i = 0; i < scores.Count; i++)
             {
                 Rectangle scoreBox = new Rectangle(16, 32 + 128 + i * 64, 700, 64);
-                if (scoreBox.Bottom < canvas.Height - 128)
+                if (scoreBox.Bottom > canvas.Height - 128)
                     break;
                 target.FillRectangle(backgroundBrush, scoreBox);
                 target.DrawString($"{scores[i].Name}: {scores[i].Score}", UIFont, fontBrush, scoreBox);
