@@ -88,6 +88,8 @@ namespace taikoclone
         List<int> comboes = new List<int>();
 
         private Rectangle exitButton;
+        private static SolidBrush exitTint = new SolidBrush(Color.FromArgb(200, 32, 0, 0));
+
 
         /// <summary>
         /// Key icons for tooltips
@@ -144,14 +146,12 @@ namespace taikoclone
             };
             canvas.SendToBack();
             waveOutDevice = new WaveOut();
-            Console.WriteLine(selectedMap.AudioFile);
             AudioFileReader audioFileReader = new AudioFileReader(selectedMap.AudioFile);
             waveOutDevice.Init(audioFileReader);
             cumWatch.Start();
             map.Restart();
-            exitButton = new Rectangle(25, canvas.Height - 60, 150, 50);
+            exitButton = new Rectangle(canvas.Width - 300, canvas.Height - 128, 256, 96);
             canvas.Dock = DockStyle.Fill;
-            Console.WriteLine($"Great: {Judgement.Great}, Ok: {Judgement.Ok}, Miss: {Judgement.Miss}");
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -187,13 +187,12 @@ namespace taikoclone
 
         private void GameUpdate_Tick(object sender, EventArgs e)
         {
-            exitButton = new Rectangle(25, canvas.Height - 60, 150, 50);
+            exitButton = new Rectangle(canvas.Width - 300, canvas.Height - 128, 256, 96);
             if (map.activeObjects.Count() == 0)
             {
                 GameUpdate.Enabled = false;
                 comboes.Add(combo);
                 this.Hide();
-                Console.WriteLine($"{CurrentAccuracy()}%");
                 Results resultScreen = new Results(judgements, comboes, mapInfo, mapLB);
                 resultScreen.ShowDialog();
                 this.Close();
@@ -248,18 +247,29 @@ namespace taikoclone
             e.Graphics.FillRectangle(brush, rightPressIndicator);
             brush.Color = Color.White;
             e.Graphics.DrawString($"{combo}x", UIFont, brush, new Point(5, canvas.Height - UIFont.Height));
+            e.Graphics.FillRectangle(exitTint, exitButton);
+            e.Graphics.DrawString($"Exit", UIFont, brush, exitButton);
         }
         private double CurrentAccuracy()
         {
             if (judgements.Count() == 0)
                 return 1;
-            return judgements.Average(j => (int)j) / 300;
+            return judgements.Sum(j => (double)j) / (judgements.Count() * 300);
         }
 
         private void Gameplay_FormClosed(object sender, FormClosedEventArgs e)
         {
             GameUpdate.Enabled = false;
             waveOutDevice.Stop();
+        }
+
+        private void canvas_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (exitButton.Contains(e.Location))
+            {
+                GameUpdate.Enabled = false;
+                this.Close();
+            }
         }
     }
     public enum Judgement

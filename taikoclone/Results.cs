@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NAudio.SoundFont;
+using taikoclone.Utils;
 
 namespace taikoclone
 {
@@ -16,8 +17,8 @@ namespace taikoclone
         MapInfo map;
         public ScoreInfo score;
         static SolidBrush backgroundTint = new SolidBrush(Color.FromArgb(200, 0, 0, 32));
-        static SolidBrush textColor = new SolidBrush(textColor.White);
-        static Font bigFont = new Font("Arial", 64);
+        static SolidBrush textColor = new SolidBrush(Color.White);
+        static Font bigFont = new Font("Arial", 48);
         static Font medFont = new Font("Arial", 32);
         static Font smallFont = new Font("Arial", 24);
         public Results(List<Judgement> judgements, List<int> comboes, MapInfo map, Leaderboard targetBoard)
@@ -25,6 +26,7 @@ namespace taikoclone
             FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;
             InitializeComponent();
+            canvas.Dock = DockStyle.Fill;
             canvas.Invalidate();
             this.score = new ScoreInfo(judgements, comboes, map);
             this.map = map;
@@ -32,6 +34,7 @@ namespace taikoclone
             nameGetter.ShowDialog();
             string name = nameGetter.field;
             targetBoard.scores.Add(new LeaderboardScore(this.score, name));
+            targetBoard.scores = targetBoard.scores.OrderByDescending(score => score.Score.Score).ToList();
         }
 
         private void canvas_Paint(object sender, PaintEventArgs e)
@@ -40,32 +43,33 @@ namespace taikoclone
             Image bgImage = map.Background;
             if (!(bgImage is null))
                 e.Graphics.DrawImage(map.Background, new Rectangle(0, 0, canvas.Width, canvas.Height));
-            Rectangle mapTitle = new Rectangle(16, 16, 512, 64);
-            Rectangle diffTitle = new Rectangle(16, 96, 256, 32);
-            e.Graphics.FillRectangle(mapTitle, backgroundTint);
+            Rectangle mapTitle = new Rectangle(16, 16, 1024, 256);
+            Rectangle diffTitle = new Rectangle(16, mapTitle.Bottom + 16, 512, 96);
+            e.Graphics.FillRectangle(backgroundTint, mapTitle);
             e.Graphics.DrawString(map.Name, bigFont, textColor, mapTitle);
-            e.Graphics.FillRectangle(diffTitle, backgroundTint);
-            e.Graphics.DrawString(map.Difficulty, medFont, textColor, diffTitle);
+            e.Graphics.FillRectangle(backgroundTint, diffTitle);
+            e.Graphics.DrawString(map.DifficultyName, medFont, textColor, diffTitle);
 
-            Rectangle judgementBox = new Rectangle(32, 144, 780, canvas.Height - 144 - 32);
-            e.Graphics.FillRectangle(judgementBox, backgroundTint);
+            Rectangle judgementBox = new Rectangle(32, diffTitle.Bottom + 32, 780, canvas.Height - (diffTitle.Bottom + 32) - 32);
+            e.Graphics.FillRectangle(backgroundTint, judgementBox);
 
-            Rectangle greatBox = new Rectangle(32, 200, 256, 52);
-            e.Graphics.FillRectangle(greatBox, backgroundTint);
-            e.Graphics.DrawString($"Great: {score.CountGreat}", smallFont, textColor);
-            Rectangle okBox = new Rectangle(320, 200, 256, 52);
-            e.Graphics.FillRectangle(greatBox, backgroundTint);
-            e.Graphics.DrawString($"OK: {score.CountOk}", smallFont, textColor);
-            Rectangle missBox = new Rectangle(32, 264, 256, 52);
-            e.Graphics.FillRectangle(greatBox, backgroundTint);
-            e.Graphics.DrawString($"Miss: {score.CountMiss}", smallFont, textColor);
-            Rectangle comboBox = new Rectangle(32, 328, 256, 64);
-            e.Graphics.FillRectangle(greatBox, backgroundTint);
-            e.Graphics.DrawString($"{score.MaxCombo}x", medFont, textColor);
-
-            Rectangle scoreBox = new Rectangle(32, 392, 256, 128);
-            e.Graphics.FillRectangle(greatBox, backgroundTint);
-            e.Graphics.DrawString($"{score.Score:F0}x", bigFont, textColor);
+            Rectangle greatBox = new Rectangle(32, judgementBox.Top + 16, 256, 52);
+            e.Graphics.DrawString($"Great: {score.CountGreat}", smallFont, textColor, greatBox);
+            Rectangle okBox = new Rectangle(greatBox.Right + 32, greatBox.Top, 256, 52);
+            e.Graphics.DrawString($"OK: {score.CountOk}", smallFont, textColor, okBox);
+            Rectangle missBox = new Rectangle(greatBox.Left, greatBox.Bottom + 32, 256, 52);
+            e.Graphics.DrawString($"Miss: {score.CountMiss}", smallFont, textColor, missBox);
+            Rectangle comboBox = new Rectangle(greatBox.Left, missBox.Bottom + 32, 256, 64);
+            e.Graphics.DrawString($"{score.MaxCombo}x", medFont, textColor, comboBox);
+            Rectangle accuracyBox = new Rectangle(judgementBox.Right - 256, judgementBox.Bottom - 128, 256, 128);
+            Console.WriteLine(score.Accuracy);
+            e.Graphics.DrawString($"{score.Accuracy * 100:F2}%", bigFont, textColor, accuracyBox);
+            foreach (var judgement in score.judgementCounts)
+            {
+                Console.WriteLine($"{(double)judgement.Key}: {judgement.Value}");
+            }
+            Rectangle scoreBox = new Rectangle(greatBox.Left, judgementBox.Bottom - 128, 256, 128);
+            e.Graphics.DrawString($"{score.Score:F0}", bigFont, textColor, scoreBox);
             
         }
         private void Results_KeyDown(object sender, KeyEventArgs e)
@@ -76,7 +80,7 @@ namespace taikoclone
     }
     public class ScoreInfo
     {
-        Dictionary<Judgement, int> judgementCounts;
+        public Dictionary<Judgement, int> judgementCounts;
         List<int> comboes;
         private int? maxCombo = null;
         private int InitialiseCombo()
@@ -87,7 +91,7 @@ namespace taikoclone
         public int CountOk => judgementCounts[Judgement.Ok];
         public int CountMiss => judgementCounts[Judgement.Miss];
         public double Accuracy
-            => judgementCounts.Sum(judgement => judgement.Value * (int)judgement.Key) / (judgementCounts.Sum(judgement => judgement.Value * (int)Judgement.Great) * (int)Judgement.Great);
+            => judgementCounts.Sum(judgement => judgement.Value * (double)judgement.Key) / (judgementCounts.Sum(judgement => judgement.Value * (double)Judgement.Great));
         public MapInfo map;
         public ScoreInfo(List<Judgement> judgements, List<int> comboes, MapInfo map)
         {
@@ -126,7 +130,7 @@ namespace taikoclone
         {
             if (map is null)
                 throw new ArgumentNullException("Attempted to calculate score on null map");
-            score = 1000000 * Accuracy * (comboes.Sum(c => Math.Pow(c, 2)) / Math.Pow(map.map.MaxCombo, 2));
+            score = 100000 * Accuracy * (comboes.Sum(c => Math.Pow(c, 2)) / Math.Pow(map.map.MaxCombo, 2));
             return score.Value;
         }
         public string ToCsv()

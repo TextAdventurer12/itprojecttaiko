@@ -4,6 +4,7 @@ using System.IO;
 using taikoclone.Utils;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Linq;
 
 namespace taikoclone
 {
@@ -28,6 +29,7 @@ namespace taikoclone
             IEnumerable<string> csv = IOUtils.dumpFile(source);
             foreach (string line in csv)
                 scores.Add(new LeaderboardScore(line));
+            scores = scores.OrderByDescending(score => score.Score.Score).ToList();
         }
         public Leaderboard(string Header)
         {
@@ -41,11 +43,11 @@ namespace taikoclone
             target.DrawString(Header, HeaderFont, fontBrush, header);
             for (int i = 0; i < scores.Count; i++)
             {
-                Rectangle scoreBox = new Rectangle(16, 32 + 128 + i * 64, 700, 64);
+                Rectangle scoreBox = new Rectangle(16, 32 + 128 + i * 70, 700, 60);
                 if (scoreBox.Bottom > canvas.Height - 128)
                     break;
                 target.FillRectangle(backgroundBrush, scoreBox);
-                target.DrawString($"{scores[i].Name}: {scores[i].Score}", UIFont, fontBrush, scoreBox);
+                target.DrawString($"{scores[i].Name}: {scores[i].Score.Score:F0}", UIFont, fontBrush, scoreBox);
             }
         }
     }
@@ -66,7 +68,7 @@ namespace taikoclone
             this.Name = entries[0];
             string scoreData = "";
             for (int i = 1; i < entries.Length; i++)
-                scoreData += entries[i];
+                scoreData += $"{StringUtils.AsDigits(entries[i])}, ";
             this.Score = new ScoreInfo(scoreData);
         }
         public string ToCsv()

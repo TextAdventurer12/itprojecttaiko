@@ -17,5 +17,10 @@ namespace taikoclone.Utils
             ++end;
             return str.Remove(end, str.Length - end);
         }
+        public static string AsDigits(string str)
+        {
+            List<char> digitList = str.Where(ch => char.IsDigit(ch) || ch == '.').ToList();
+            return new string(digitList.ToArray());
+        }
     }
 }

@@ -41,12 +41,11 @@ namespace taikoclone
                 }
                 catch
                 {
-                    StreamWriter lb = new StreamWriter(File.Create($"{lbFolder}/{map.Name} [{map.DifficultyName}]"));
                     leaderboards.Add(new Leaderboard($"{map.Name} [{map.DifficultyName}]"));
-                    lb.WriteLine($"{map.Name} [{map.DifficultyName}]");
                     continue;
                 }
                 leaderboards.Add(new Leaderboard(source));
+                source.Close();
             }
             backgroundTint = new SolidBrush(Color.FromArgb(64, 0, 0, 0));
             buttonColour = new SolidBrush(Color.FromArgb(200, 0, 0, 32));
@@ -133,6 +132,7 @@ namespace taikoclone
             this.Show(); 
             StreamWriter lb = new StreamWriter(File.Create($"../../Leaderboards/{library[selectedIndex].Name} [{library[selectedIndex].DifficultyName}]"));
             leaderboards[selectedIndex].SaveToFile(lb);
+            lb.Close();
         }
 
         private void Menu_MouseClick(object sender, MouseEventArgs e)

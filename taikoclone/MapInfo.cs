@@ -38,9 +38,7 @@ namespace taikoclone
             {
                 string file = Path.GetFileName(filePath);
                 if (file.Contains(".mp3"))
-                {
                     return filePath;
-                }
             }
             return null;
         }

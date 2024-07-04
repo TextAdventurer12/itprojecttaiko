@@ -23,5 +23,11 @@ namespace taikoclone
             this.field = textBox1.Text;
             this.Close();
         }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                buttonSubmit_Click(sender, e);
+        }
     }
 }

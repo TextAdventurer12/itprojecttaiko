@@ -42,6 +42,7 @@
             this.canvas.TabIndex = 0;
             this.canvas.TabStop = false;
             this.canvas.Paint += new System.Windows.Forms.PaintEventHandler(this.canvas_Paint);
+            this.canvas.MouseClick += new System.Windows.Forms.MouseEventHandler(this.canvas_MouseClick);
             // 
             // GameUpdate
             // 

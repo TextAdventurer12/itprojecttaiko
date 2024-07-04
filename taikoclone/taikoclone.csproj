@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D019837C-46D6-4238-9830-1BBE93F62CCC}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>taikoclone</RootNamespace>
     <AssemblyName>taikoclone</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -103,7 +103,6 @@
     <Compile Include="HitObject.cs" />
     <Compile Include="Leaderboard.cs" />
     <Compile Include="Map.cs" />
-    <Compile Include="MapDownloader.cs" />
     <Compile Include="MapFrame.cs" />
     <Compile Include="MapInfo.cs" />
     <Compile Include="MapParser.cs" />
@@ -113,8 +112,6 @@
     <Compile Include="Menu.Designer.cs">
       <DependentUpon>Menu.cs</DependentUpon>
     </Compile>
-    <Compile Include="Network\FileWebRequest.cs" />
-    <Compile Include="Network\WebRequest.cs" />
     <Compile Include="Popup.cs">
       <SubType>Form</SubType>
     </Compile>

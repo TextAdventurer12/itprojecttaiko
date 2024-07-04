@@ -38,7 +38,7 @@
             this.buttonSubmit.Location = new System.Drawing.Point(12, 81);
             this.buttonSubmit.Name = "buttonSubmit";
             this.buttonSubmit.Size = new System.Drawing.Size(216, 56);
-            this.buttonSubmit.TabIndex = 0;
+            this.buttonSubmit.TabIndex = 1;
             this.buttonSubmit.Text = "&Submit";
             this.buttonSubmit.UseVisualStyleBackColor = true;
             this.buttonSubmit.Click += new System.EventHandler(this.buttonSubmit_Click);
@@ -48,7 +48,8 @@
             this.textBox1.Location = new System.Drawing.Point(12, 55);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(216, 20);
-            this.textBox1.TabIndex = 1;
+            this.textBox1.TabIndex = 0;
+            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
             // 
             // label1
             // 
